@@ -57,6 +57,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Objects\CompetitorResult.cs" />
+    <Compile Include="Objects\CompetitorViewModel.cs" />
     <Compile Include="ResultsListViewModel.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
@@ -75,7 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Objects\CompetitionClass.cs" />
-    <Compile Include="Objects\Competitor.cs" />
+    <Compile Include="Objects\CompetitorAxware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

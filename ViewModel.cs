@@ -11,7 +11,7 @@ namespace AxwareERC
 	public class ViewModel : INotifyPropertyChanged
 	{
 		private string _appTitle = "ERC Axware - file not loaded";
-		private List<Competitor> _competitorsResultList = new List<Competitor>();
+		private List<CompetitorViewModel> _competitorsResultList = new List<CompetitorViewModel>();
 
 		public string AppTitle
 		{
@@ -25,7 +25,7 @@ namespace AxwareERC
 			}
 		}
 
-		public List<Competitor> CompetitorsResultList
+		public List<CompetitorViewModel> CompetitorsResultList
 		{
 			get { return _competitorsResultList; }
 			set

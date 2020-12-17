@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace AxwareERC.Objects
 {
-    public class Competitor
+    public class CompetitorAxware
     {
         public int Number { get; set; }
         public CompetitionClass Class { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string CarModel { get; set; }
+        public string Name { get; set; }
+        //public string FirstName { get; set; }
+        //public string LastName { get; set; }
+        public string Car { get; set; }
         //public string CarColor { get; set; }
         //public bool Bumped { get; set; }
         //public CompetitionClass? Class2 { get; set; }
@@ -44,7 +45,7 @@ namespace AxwareERC.Objects
         //public string Option8 { get; set; }
         //public string Option9 { get; set; }
         //public bool CheckIn { get; set; }
-        public string RawTime { get; set; }
+        public string TotalTime { get; set; }
         //public int RawPosition { get; set; }
         //public double Total { get; set; }
         //public double Diff { get; set; }

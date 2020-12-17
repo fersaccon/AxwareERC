@@ -13,13 +13,16 @@
                 <Separator />
                 <MenuItem Header="_Exit" Click="exitClick"/>
             </MenuItem>
+            <MenuItem Header="_Results">
+                <MenuItem Header="_Generate" Click="generateResults" />
+            </MenuItem>
             <MenuItem Header="_Window">
                 <MenuItem Header="_Maximize on second display" Click="maximizeSecondDisplay" />
             </MenuItem>
         </Menu>
         <Grid Margin="0,60,0,10">
-            <DataGrid x:Name="DataGrid1" ItemsSource="{Binding}" AlternationCount="2" AlternatingRowBackground="#e9e9e9" Margin="0,0,0,10"/>
-            <Label Content="Results Preview" HorizontalAlignment="Center" Margin="0,-47,0,0" VerticalAlignment="Top" FontSize="24"/>
+            <DataGrid x:Name="DataGrid1" ItemsSource="{Binding}" AlternationCount="2" AlternatingRowBackground="#e9e9e9" Margin="0,-25,0,10"/>
+            <Label Content="Results Preview" HorizontalAlignment="Center" Margin="310,-67,310,0" VerticalAlignment="Top" FontSize="24" Height="37"/>
         </Grid>
     </DockPanel>
 

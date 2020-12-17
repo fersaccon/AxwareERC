@@ -3,31 +3,34 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace AxwareERC
 {
     public static class CompetitorService
     {
-        public static List<Competitor> ReadFile(string filepath)
+        public static List<CompetitorAxware> ReadFile(string filepath)
         {
             var lines = File.ReadAllLines(filepath);
             var data = from l in lines.Skip(1)
                        let split = l.Split('\t')
-                       select new Competitor
+                       select new CompetitorAxware
                        {
                            Class = (CompetitionClass)Enum.Parse(typeof(CompetitionClass), split[0]),
                            Number = int.Parse(split[1]),
-                           FirstName = split[2],
-                           LastName = split[3],
-                           CarModel = split[4],
+                           Name = split[2] + " " + split[3],
+                           //FirstName = split[2],
+                           //LastName = split[3],
+                           Car = split[4],
                            //CarColor = split[5],
                            //Bumped = split[7] == "Yes" ? true : false,
                            //Class2 = string.IsNullOrEmpty(split[8])?null:(CompetitionClass)Enum.Parse(typeof(CompetitionClass), split[8]),
                            //GridNumber = int.Parse(split[9]),
                            //Member = split[10] == "Yes" ? true : false,
-                           RawTime = split[37],
+                           TotalTime = split[37],
                            //RawPosition = int.Parse(split[38]),
                            Run1 = split.Count() > 45 ? split[45] : "",
                            Pen1 = split.Count() > 46 ? split[46] : "",
@@ -73,6 +76,66 @@ namespace AxwareERC
                        };
 
             return data.ToList();
+        }
+
+        public static bool WriteFile ( string filepath, List<CompetitorViewModel> results)
+        {
+            if (results.Count != 0)
+            {
+                try
+                {
+                    using (Stream stream = File.OpenWrite(filepath))
+                    {
+                        Type t = typeof(CompetitorViewModel);
+                        FieldInfo[] fields = t.GetFields(BindingFlags.Instance |
+                           BindingFlags.Static |
+                           BindingFlags.NonPublic |
+                           BindingFlags.Public);
+                        PropertyInfo[] properties = typeof(CompetitorViewModel).GetProperties();
+
+                        stream.SetLength(0);
+                        using (StreamWriter writer = new StreamWriter(stream))
+                        {
+                            // Write field names
+                            string header = String.Join(",", properties.Select(p => p.Name).ToArray());
+                            writer.WriteLine(header);
+                            // loop through each row of our DataGridView
+                            foreach (CompetitorViewModel row in results)
+                            {
+                                writer.WriteLine(ToCsvValues(",", fields, row));
+                            }
+
+                            writer.Flush();
+                        }
+                    };
+
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private static string ToCsvValues(string separator, FieldInfo[] fields, object o)
+        {
+            StringBuilder linie = new StringBuilder();
+
+            foreach (var f in fields)
+            {
+                if (linie.Length > 0)
+                    linie.Append(separator);
+
+                var x = f.GetValue(o);
+
+                if (x != null)
+                    linie.Append(x.ToString());
+            }
+
+            return linie.ToString();
         }
     }
 }

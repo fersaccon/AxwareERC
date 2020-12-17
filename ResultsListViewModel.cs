@@ -10,9 +10,9 @@ namespace AxwareERC
 {
 	public class ResultsViewModel : INotifyPropertyChanged
 	{
-		private List<Competitor> _competitorsResultList = new List<Competitor>();
+		private List<CompetitorViewModel> _competitorsResultList = new List<CompetitorViewModel>();
 
-		public List<Competitor> CompetitorsResultList
+		public List<CompetitorViewModel> CompetitorsResultList
 		{
 			get { return _competitorsResultList; }
 			set
