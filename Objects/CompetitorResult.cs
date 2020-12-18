@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace AxwareERC.Objects
 {
-    class CompetitorResult
+    public class CompetitorResult
     {
-        public CompetitionClass Class { get; set; }
+        //public CompetitionClass Class { get; set; }
         public int Number { get; set; }
         public string Name { get; set; }
         public string Car { get; set; }
@@ -34,10 +34,16 @@ namespace AxwareERC.Objects
         public string Time20 { get; set; }
         public double RawTime { get; set; }
         public double MinusSlowest { get; set; }
+        public double FastestLap { get; set; }
         public int Position { get; set; }
+        public int PositionPoints { get; set; }
+        public int CompetitorsInClassPoints { get; set; }
+        public int FastestLapPoints { get; set; }
         public int Points { get; set; }
-        public int CompetitorsInClass { get; set; }
-        public int FastestLap { get; set; }
 
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

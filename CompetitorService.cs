@@ -78,33 +78,77 @@ namespace AxwareERC
             return data.ToList();
         }
 
-        public static bool WriteFile ( string filepath, List<CompetitorViewModel> results)
+        public static bool WriteResultsFile ( string filepath, List<CompetitorResult> overallResults, 
+            List<CompetitorResult> n2Results, List<CompetitorResult> n4Results, List<CompetitorResult> e2Results, List<CompetitorResult> e4Results,
+            List<CompetitorResult> proResults, List<CompetitorResult> truckResults)
         {
-            if (results.Count != 0)
+            if (overallResults.Count > 0)
             {
                 try
                 {
                     using (Stream stream = File.OpenWrite(filepath))
                     {
-                        Type t = typeof(CompetitorViewModel);
+                        Type t = typeof(CompetitorResult);
                         FieldInfo[] fields = t.GetFields(BindingFlags.Instance |
                            BindingFlags.Static |
                            BindingFlags.NonPublic |
                            BindingFlags.Public);
-                        PropertyInfo[] properties = typeof(CompetitorViewModel).GetProperties();
+                        PropertyInfo[] properties = typeof(CompetitorResult).GetProperties();
 
                         stream.SetLength(0);
                         using (StreamWriter writer = new StreamWriter(stream))
                         {
                             // Write field names
+                            writer.WriteLine("Overall");
                             string header = String.Join(",", properties.Select(p => p.Name).ToArray());
                             writer.WriteLine(header);
                             // loop through each row of our DataGridView
-                            foreach (CompetitorViewModel row in results)
-                            {
+                            foreach (CompetitorResult row in overallResults)
                                 writer.WriteLine(ToCsvValues(",", fields, row));
+
+                            if (n2Results.Count > 0)
+                            {
+                                writer.WriteLine("Novice 2WD");
+                                writer.WriteLine(header);
+                                foreach (CompetitorResult row in n2Results)
+                                    writer.WriteLine(ToCsvValues(",", fields, row));
                             }
 
+                            if (n4Results.Count > 0)
+                            {
+                                writer.WriteLine("Novice 4WD");
+                                writer.WriteLine(header);
+                                foreach (CompetitorResult row in n4Results)
+                                    writer.WriteLine(ToCsvValues(",", fields, row));
+                            }
+                            if (e2Results.Count > 0)
+                            {
+                                writer.WriteLine("Expert 2WD");
+                                writer.WriteLine(header);
+                                foreach (CompetitorResult row in e2Results)
+                                    writer.WriteLine(ToCsvValues(",", fields, row));
+                            }
+                            if (e4Results.Count > 0)
+                            {
+                                writer.WriteLine("Expert 4WD");
+                                writer.WriteLine(header);
+                                foreach (CompetitorResult row in e4Results)
+                                    writer.WriteLine(ToCsvValues(",", fields, row));
+                            }
+                            if (proResults.Count > 0)
+                            {
+                                writer.WriteLine("Pro");
+                                writer.WriteLine(header);
+                                foreach (CompetitorResult row in proResults)
+                                    writer.WriteLine(ToCsvValues(",", fields, row));
+                            }
+                            if (truckResults.Count > 0)
+                            {
+                                writer.WriteLine("Truck");
+                                writer.WriteLine(header);
+                                foreach (CompetitorResult row in truckResults)
+                                    writer.WriteLine(ToCsvValues(",", fields, row));
+                            }
                             writer.Flush();
                         }
                     };

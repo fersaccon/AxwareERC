@@ -34,6 +34,7 @@ namespace AxwareERC.Objects
         public string Time20 { get; set; }
         public double RawTime { get; set; }
         public double MinusSlowest { get; set; }
+        public double FastestLap { get; set; }
         public int Overall { get; set; }
         public int InClass { get; set; }
 
