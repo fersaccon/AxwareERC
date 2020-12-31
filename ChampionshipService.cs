@@ -29,25 +29,220 @@ namespace AxwareERC
                     TruckCompetitors = Convert.ToInt32(lines[7])
                 };
 
-                //Skip one line then reads overall results based on number of overall competitors
+                //Skip one line then reads Overall results
                 if (championshipResult.OverallCompetitors > 0)
                 {
                     championshipResult.Overall = new List<CompetitorChampionship>();
+                    //First competitor on Overall class is on line # 9
+                    for (int i = 9; i < championshipResult.OverallCompetitors + 9; i++)
+                    {
+                        string[] split = lines[i].Split(',');
+                        var competitorChampionship = new CompetitorChampionship
+                        {
+                            Number = int.Parse(split[0]),
+                            Name = split[1],
+                            Car = split[2],
+                            Points = new List<EventPoints>(),
+                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
+                        };
+                        for (int j = 0; j < championshipResult.Events; j++)
+                        {
+                            var eventPoints = new EventPoints
+                            {
+                                Position = int.Parse(split[3 * j + 3]),
+                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
+                                FastestLap= int.Parse(split[3 * j + 5])
+                            };
+                            competitorChampionship.Points.Add(eventPoints);
+                        }
+                        championshipResult.Overall.Add(competitorChampionship);
+                    }
+                 }
 
-                    var data = from l in lines.Skip(9).Take(championshipResult.OverallCompetitors)
-                               let split = l.Split(',')
-                               select new CompetitorChampionship
-                               {
-                                   Number = int.Parse(split[0]),
-                                   Name = split[1],
-                                   Car = split[2],
-                                   //Add values to Points array depending on how many events the file has results for
-                                   //Points = new int[3] { int.Parse(split[3]), int.Parse(split[4]), int.Parse(split[5])},
-                                   Total = int.Parse(split[championshipResult.Events * 3 + 3])
-                               };
-
-                    championshipResult.Overall.AddRange(data);
+                //Skip one line then reads N2 results based on number of Overall competitors
+                int firstCompetitor = 9 + championshipResult.OverallCompetitors + 1;
+                if (championshipResult.N2Competitors > 0)
+                {
+                    championshipResult.N2 = new List<CompetitorChampionship>();
+                    //First competitor on N2 class is on line # 9 + OverallCompetitors + 1
+                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.N2Competitors; i++)
+                    {
+                        string[] split = lines[i].Split(',');
+                        var competitorChampionship = new CompetitorChampionship
+                        {
+                            Number = int.Parse(split[0]),
+                            Name = split[1],
+                            Car = split[2],
+                            Points = new List<EventPoints>(),
+                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
+                        };
+                        for (int j = 0; j < championshipResult.Events; j++)
+                        {
+                            var eventPoints = new EventPoints
+                            {
+                                Position = int.Parse(split[3 * j + 3]),
+                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
+                                FastestLap = int.Parse(split[3 * j + 5])
+                            };
+                            competitorChampionship.Points.Add(eventPoints);
+                        }
+                        championshipResult.N2.Add(competitorChampionship);
+                    }
                 }
+
+                //Skip one line then reads N4 results based on number of N2 competitors
+                firstCompetitor += championshipResult.N2Competitors + 1;
+                if (championshipResult.N4Competitors > 0)
+                {
+                    championshipResult.N4 = new List<CompetitorChampionship>();
+                    //First competitor on N2 class is on line # 9 + OverallCompetitors + 1
+                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.N4Competitors; i++)
+                    {
+                        string[] split = lines[i].Split(',');
+                        var competitorChampionship = new CompetitorChampionship
+                        {
+                            Number = int.Parse(split[0]),
+                            Name = split[1],
+                            Car = split[2],
+                            Points = new List<EventPoints>(),
+                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
+                        };
+                        for (int j = 0; j < championshipResult.Events; j++)
+                        {
+                            var eventPoints = new EventPoints
+                            {
+                                Position = int.Parse(split[3 * j + 3]),
+                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
+                                FastestLap = int.Parse(split[3 * j + 5])
+                            };
+                            competitorChampionship.Points.Add(eventPoints);
+                        }
+                        championshipResult.N4.Add(competitorChampionship);
+                    }
+                }
+
+                //Skip one line then reads E2 results based on number of N4 competitors
+                firstCompetitor += championshipResult.N4Competitors + 1;
+                if (championshipResult.E2Competitors > 0)
+                {
+                    championshipResult.E2 = new List<CompetitorChampionship>();
+                    //First competitor on E2 class is after firstN4Competitor + championshipResult.N4Competitors + 1
+                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.E2Competitors; i++)
+                    {
+                        string[] split = lines[i].Split(',');
+                        var competitorChampionship = new CompetitorChampionship
+                        {
+                            Number = int.Parse(split[0]),
+                            Name = split[1],
+                            Car = split[2],
+                            Points = new List<EventPoints>(),
+                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
+                        };
+                        for (int j = 0; j < championshipResult.Events; j++)
+                        {
+                            var eventPoints = new EventPoints
+                            {
+                                Position = int.Parse(split[3 * j + 3]),
+                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
+                                FastestLap = int.Parse(split[3 * j + 5])
+                            };
+                            competitorChampionship.Points.Add(eventPoints);
+                        }
+                        championshipResult.E2.Add(competitorChampionship);
+                    }
+                }
+
+                //Skip one line then reads E4 results based on number of E2 competitors
+                firstCompetitor += championshipResult.E2Competitors + 1;
+                if (championshipResult.E4Competitors > 0)
+                {
+                    championshipResult.E4 = new List<CompetitorChampionship>();
+                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.E4Competitors; i++)
+                    {
+                        string[] split = lines[i].Split(',');
+                        var competitorChampionship = new CompetitorChampionship
+                        {
+                            Number = int.Parse(split[0]),
+                            Name = split[1],
+                            Car = split[2],
+                            Points = new List<EventPoints>(),
+                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
+                        };
+                        for (int j = 0; j < championshipResult.Events; j++)
+                        {
+                            var eventPoints = new EventPoints
+                            {
+                                Position = int.Parse(split[3 * j + 3]),
+                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
+                                FastestLap = int.Parse(split[3 * j + 5])
+                            };
+                            competitorChampionship.Points.Add(eventPoints);
+                        }
+                        championshipResult.E4.Add(competitorChampionship);
+                    }
+                }
+
+                //Skip one line then reads Pro results based on number of E4 competitors
+                firstCompetitor += championshipResult.E4Competitors + 1;
+                if (championshipResult.ProCompetitors > 0)
+                {
+                    championshipResult.Pro = new List<CompetitorChampionship>();
+                    //First competitor on E2 class is after firstN4Competitor + championshipResult.N4Competitors + 1
+                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.ProCompetitors; i++)
+                    {
+                        string[] split = lines[i].Split(',');
+                        var competitorChampionship = new CompetitorChampionship
+                        {
+                            Number = int.Parse(split[0]),
+                            Name = split[1],
+                            Car = split[2],
+                            Points = new List<EventPoints>(),
+                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
+                        };
+                        for (int j = 0; j < championshipResult.Events; j++)
+                        {
+                            var eventPoints = new EventPoints
+                            {
+                                Position = int.Parse(split[3 * j + 3]),
+                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
+                                FastestLap = int.Parse(split[3 * j + 5])
+                            };
+                            competitorChampionship.Points.Add(eventPoints);
+                        }
+                        championshipResult.Pro.Add(competitorChampionship);
+                    }
+                }
+
+                //Skip one line then reads Truck results based on number of Pro competitors
+                firstCompetitor += championshipResult.ProCompetitors + 1;
+                if (championshipResult.TruckCompetitors > 0)
+                {
+                    championshipResult.Truck = new List<CompetitorChampionship>();
+                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.TruckCompetitors; i++)
+                    {
+                        string[] split = lines[i].Split(',');
+                        var competitorChampionship = new CompetitorChampionship
+                        {
+                            Number = int.Parse(split[0]),
+                            Name = split[1],
+                            Car = split[2],
+                            Points = new List<EventPoints>(),
+                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
+                        };
+                        for (int j = 0; j < championshipResult.Events; j++)
+                        {
+                            var eventPoints = new EventPoints
+                            {
+                                Position = int.Parse(split[3 * j + 3]),
+                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
+                                FastestLap = int.Parse(split[3 * j + 5])
+                            };
+                            competitorChampionship.Points.Add(eventPoints);
+                        }
+                        championshipResult.Truck.Add(competitorChampionship);
+                    }
+                }
+
                 return championshipResult;
             }
             catch (Exception e)
