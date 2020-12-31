@@ -599,9 +599,14 @@ namespace AxwareERC
                                 Number = competitor.Number,
                                 Car = competitor.Car,
                                 Name = competitor.Name,
+                                Points = new List<EventPoints>(),
                                 Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
                             };
-                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
+                            EventPoints ep = new EventPoints() {
+                                Position = competitor.PositionPoints,
+                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                                FastestLap = competitor.FastestLapPoints};
+                            competitorChampionship.Points.Add(ep);
                             championship.Overall.Add(competitorChampionship);
                         };
 
@@ -614,10 +619,16 @@ namespace AxwareERC
                                 Number = competitor.Number,
                                 Car = competitor.Car,
                                 Name = competitor.Name,
+                                Points = new List<EventPoints>(),
                                 Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
                             };
-                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
-                            championship.N2.Add(competitorChampionship);
+                            EventPoints ep = new EventPoints()
+                            {
+                                Position = competitor.PositionPoints,
+                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                                FastestLap = competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points.Add(ep); championship.N2.Add(competitorChampionship);
                         };
 
                         // N4 results
@@ -629,10 +640,16 @@ namespace AxwareERC
                                 Number = competitor.Number,
                                 Car = competitor.Car,
                                 Name = competitor.Name,
+                                Points = new List<EventPoints>(),
                                 Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
                             };
-                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
-                            championship.N4.Add(competitorChampionship);
+                            EventPoints ep = new EventPoints()
+                            {
+                                Position = competitor.PositionPoints,
+                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                                FastestLap = competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points.Add(ep); championship.N4.Add(competitorChampionship);
                         };
 
                         // E2 results
@@ -644,10 +661,16 @@ namespace AxwareERC
                                 Number = competitor.Number,
                                 Car = competitor.Car,
                                 Name = competitor.Name,
+                                Points = new List<EventPoints>(),
                                 Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
                             };
-                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
-                            championship.E2.Add(competitorChampionship);
+                            EventPoints ep = new EventPoints()
+                            {
+                                Position = competitor.PositionPoints,
+                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                                FastestLap = competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points.Add(ep); championship.E2.Add(competitorChampionship);
                         };
 
                         // E4 results
@@ -659,10 +682,16 @@ namespace AxwareERC
                                 Number = competitor.Number,
                                 Car = competitor.Car,
                                 Name = competitor.Name,
+                                Points = new List<EventPoints>(),
                                 Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
                             };
-                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
-                            championship.E4.Add(competitorChampionship);
+                            EventPoints ep = new EventPoints()
+                            {
+                                Position = competitor.PositionPoints,
+                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                                FastestLap = competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points.Add(ep); championship.E4.Add(competitorChampionship);
                         };
 
                         // Pro results
@@ -674,10 +703,16 @@ namespace AxwareERC
                                 Number = competitor.Number,
                                 Car = competitor.Car,
                                 Name = competitor.Name,
+                                Points = new List<EventPoints>(),
                                 Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
                             };
-                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
-                            championship.Pro.Add(competitorChampionship);
+                            EventPoints ep = new EventPoints()
+                            {
+                                Position = competitor.PositionPoints,
+                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                                FastestLap = competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points.Add(ep); championship.Pro.Add(competitorChampionship);
                         };
 
                         // Truck results
@@ -689,10 +724,16 @@ namespace AxwareERC
                                 Number = competitor.Number,
                                 Car = competitor.Car,
                                 Name = competitor.Name,
+                                Points = new List<EventPoints>(),
                                 Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
                             };
-                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
-                            championship.Truck.Add(competitorChampionship);
+                            EventPoints ep = new EventPoints()
+                            {
+                                Position = competitor.PositionPoints,
+                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                                FastestLap = competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points.Add(ep); championship.Truck.Add(competitorChampionship);
                         };
 
                         ChampionshipService.WriteFile(Path.Combine(path, "Championship.erc"), championship);

@@ -58,10 +58,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ChampionshipService.cs" />
-    <Compile Include="Objects\Championship.cs" />
-    <Compile Include="Objects\CompetitorChampionship.cs" />
+    <Compile Include="Objects\Championship\Championship.cs" />
+    <Compile Include="Objects\Championship\CompetitorChampionship.cs" />
     <Compile Include="Objects\CompetitorResult.cs" />
     <Compile Include="Objects\CompetitorViewModel.cs" />
+    <Compile Include="Objects\Championship\EventPoints.cs" />
     <Compile Include="ResultsListViewModel.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">

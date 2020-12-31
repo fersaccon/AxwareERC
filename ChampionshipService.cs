@@ -42,7 +42,7 @@ namespace AxwareERC
                                    Name = split[1],
                                    Car = split[2],
                                    //Add values to Points array depending on how many events the file has results for
-                                   Points = new int[3] { int.Parse(split[3]), int.Parse(split[4]), int.Parse(split[5])},
+                                   //Points = new int[3] { int.Parse(split[3]), int.Parse(split[4]), int.Parse(split[5])},
                                    Total = int.Parse(split[championshipResult.Events * 3 + 3])
                                };
 
@@ -71,7 +71,6 @@ namespace AxwareERC
                            BindingFlags.Static |
                            BindingFlags.NonPublic |
                            BindingFlags.Public);
-                        PropertyInfo[] properties = typeof(CompetitorChampionship).GetProperties();
 
                         // Write field names
                         writer.WriteLine(championship.Events);
@@ -136,11 +135,21 @@ namespace AxwareERC
 
                 if (x != null)
                 {
-                    if (x.GetType().IsArray)
+                    if (x.GetType().IsGenericType)
                     {
-                        //If object is array, split elements first
-                        string[] strArray = Array.ConvertAll((int[])x, ele => ele.ToString());
-                        linie.Append(string.Join(separator, strArray));
+                        // Object is a list
+                        // It is assumed that is an EventPoints list. If other type is parsed, it will break
+                        foreach(var points in x as IList<EventPoints>)
+                        {
+                            Type t = points.GetType();
+                            FieldInfo[] epFields = t.GetFields(BindingFlags.Instance |
+                               BindingFlags.Static |
+                               BindingFlags.NonPublic |
+                               BindingFlags.Public);
+                            var test = ToCsvValues(",", epFields, points);
+                            linie.Append(test);
+                        }
+
                     }
                     else
                     {
