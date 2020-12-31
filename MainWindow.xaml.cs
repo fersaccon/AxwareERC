@@ -549,6 +549,9 @@ namespace AxwareERC
                 "Do you want to continue?", "Warning", MessageBoxButton.YesNo);
             if (dr == MessageBoxResult.Yes)
             {
+                // Generate current event results
+                var championship = ChampionshipService.Calculate(overallCompetitors, n2Competitors, n4Competitors, e2Competitors, e4Competitors, proCompetitors, truckCompetitors);
+
                 dr = MessageBox.Show("Is this the first event of the season? \n" +
                     "(If 'No', load the previous result file)", "Input needed", MessageBoxButton.YesNo);
                 if (dr == MessageBoxResult.No)
@@ -560,11 +563,27 @@ namespace AxwareERC
                     if (openFileDialog.ShowDialog() == true)
                     {
                         var fullDir = openFileDialog.FileName;
-                        var championshipResults = ChampionshipService.ReadFile(fullDir);
+                        // Read previous results file
+                        var championshipPreviousResults = ChampionshipService.ReadFile(fullDir);
 
                         // Verify how many event results were loaded and warn the user
+                        dr = MessageBox.Show("Number of previous events found on file:" + championshipPreviousResults.Events + ". Continue? \n"
+                            + "(Make sure you are loading the next event to the championship results)", "Input needed", MessageBoxButton.YesNo);
+                        if (dr == MessageBoxResult.Yes)
+                        {
 
-                        // Merge current results with previous records
+                            // Merge current results with previous records
+                            ChampionshipService.MergeResults(ref championshipPreviousResults, championship);
+                            // Write output file
+                            if (ChampionshipService.WriteFile(Path.Combine(path, "Championship.erc"), championshipPreviousResults))
+                                MessageBox.Show("Resuls saved to:\n" + Path.Combine(path, "Championship.erc"), "Success");
+
+                        }
+                        else
+                        {
+                            MessageBox.Show("Action cancelled: championship points not updated.", "Warning");
+                            return;
+                        }
                     }
                     else
                     {
@@ -577,166 +596,10 @@ namespace AxwareERC
                 {
                     if (dr == MessageBoxResult.Yes)
                     {
-                        // First event of the season
-                        var championship = new Championship
-                        {
-                            Events = 1,
-                            OverallCompetitors = overallCompetitors.Count(),
-                            N2Competitors = n2Competitors.Count(),
-                            N4Competitors = n4Competitors.Count(),
-                            E2Competitors = e2Competitors.Count(),
-                            E4Competitors = e4Competitors.Count(),
-                            ProCompetitors = proCompetitors.Count(),
-                            TruckCompetitors = truckCompetitors.Count()
-                        };
+                        // First event of the season - no results to merge
+                        if (ChampionshipService.WriteFile(Path.Combine(path, "Championship.erc"), championship))
+                            MessageBox.Show("Resuls saved to:\n" + Path.Combine(path, "Championship.erc"), "Success");
 
-                        // Overall results
-                        championship.Overall = new List<CompetitorChampionship>();
-                        foreach (var competitor in overallCompetitors)
-                        {
-                            var competitorChampionship = new CompetitorChampionship()
-                            {
-                                Number = competitor.Number,
-                                Car = competitor.Car,
-                                Name = competitor.Name,
-                                Points = new List<EventPoints>(),
-                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
-                            };
-                            EventPoints ep = new EventPoints() {
-                                Position = competitor.PositionPoints,
-                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
-                                FastestLap = competitor.FastestLapPoints};
-                            competitorChampionship.Points.Add(ep);
-                            championship.Overall.Add(competitorChampionship);
-                        };
-
-                        // N2 results
-                        championship.N2 = new List<CompetitorChampionship>();
-                        foreach (var competitor in n2Competitors)
-                        {
-                            var competitorChampionship = new CompetitorChampionship
-                            {
-                                Number = competitor.Number,
-                                Car = competitor.Car,
-                                Name = competitor.Name,
-                                Points = new List<EventPoints>(),
-                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
-                            };
-                            EventPoints ep = new EventPoints()
-                            {
-                                Position = competitor.PositionPoints,
-                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
-                                FastestLap = competitor.FastestLapPoints
-                            };
-                            competitorChampionship.Points.Add(ep); championship.N2.Add(competitorChampionship);
-                        };
-
-                        // N4 results
-                        championship.N4 = new List<CompetitorChampionship>();
-                        foreach (var competitor in n4Competitors)
-                        {
-                            var competitorChampionship = new CompetitorChampionship
-                            {
-                                Number = competitor.Number,
-                                Car = competitor.Car,
-                                Name = competitor.Name,
-                                Points = new List<EventPoints>(),
-                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
-                            };
-                            EventPoints ep = new EventPoints()
-                            {
-                                Position = competitor.PositionPoints,
-                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
-                                FastestLap = competitor.FastestLapPoints
-                            };
-                            competitorChampionship.Points.Add(ep); championship.N4.Add(competitorChampionship);
-                        };
-
-                        // E2 results
-                        championship.E2 = new List<CompetitorChampionship>();
-                        foreach (var competitor in e2Competitors)
-                        {
-                            var competitorChampionship = new CompetitorChampionship
-                            {
-                                Number = competitor.Number,
-                                Car = competitor.Car,
-                                Name = competitor.Name,
-                                Points = new List<EventPoints>(),
-                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
-                            };
-                            EventPoints ep = new EventPoints()
-                            {
-                                Position = competitor.PositionPoints,
-                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
-                                FastestLap = competitor.FastestLapPoints
-                            };
-                            competitorChampionship.Points.Add(ep); championship.E2.Add(competitorChampionship);
-                        };
-
-                        // E4 results
-                        championship.E4 = new List<CompetitorChampionship>();
-                        foreach (var competitor in e4Competitors)
-                        {
-                            var competitorChampionship = new CompetitorChampionship
-                            {
-                                Number = competitor.Number,
-                                Car = competitor.Car,
-                                Name = competitor.Name,
-                                Points = new List<EventPoints>(),
-                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
-                            };
-                            EventPoints ep = new EventPoints()
-                            {
-                                Position = competitor.PositionPoints,
-                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
-                                FastestLap = competitor.FastestLapPoints
-                            };
-                            competitorChampionship.Points.Add(ep); championship.E4.Add(competitorChampionship);
-                        };
-
-                        // Pro results
-                        championship.Pro = new List<CompetitorChampionship>();
-                        foreach (var competitor in proCompetitors)
-                        {
-                            var competitorChampionship = new CompetitorChampionship
-                            {
-                                Number = competitor.Number,
-                                Car = competitor.Car,
-                                Name = competitor.Name,
-                                Points = new List<EventPoints>(),
-                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
-                            };
-                            EventPoints ep = new EventPoints()
-                            {
-                                Position = competitor.PositionPoints,
-                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
-                                FastestLap = competitor.FastestLapPoints
-                            };
-                            competitorChampionship.Points.Add(ep); championship.Pro.Add(competitorChampionship);
-                        };
-
-                        // Truck results
-                        championship.Truck = new List<CompetitorChampionship>();
-                        foreach (var competitor in truckCompetitors)
-                        {
-                            var competitorChampionship = new CompetitorChampionship
-                            {
-                                Number = competitor.Number,
-                                Car = competitor.Car,
-                                Name = competitor.Name,
-                                Points = new List<EventPoints>(),
-                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
-                            };
-                            EventPoints ep = new EventPoints()
-                            {
-                                Position = competitor.PositionPoints,
-                                CompetitorsInClass = competitor.CompetitorsInClassPoints,
-                                FastestLap = competitor.FastestLapPoints
-                            };
-                            competitorChampionship.Points.Add(ep); championship.Truck.Add(competitorChampionship);
-                        };
-
-                        ChampionshipService.WriteFile(Path.Combine(path, "Championship.erc"), championship);
                     }
                 }
             }

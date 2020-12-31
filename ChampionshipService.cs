@@ -33,61 +33,15 @@ namespace AxwareERC
                 if (championshipResult.OverallCompetitors > 0)
                 {
                     championshipResult.Overall = new List<CompetitorChampionship>();
-                    //First competitor on Overall class is on line # 9
-                    for (int i = 9; i < championshipResult.OverallCompetitors + 9; i++)
-                    {
-                        string[] split = lines[i].Split(',');
-                        var competitorChampionship = new CompetitorChampionship
-                        {
-                            Number = int.Parse(split[0]),
-                            Name = split[1],
-                            Car = split[2],
-                            Points = new List<EventPoints>(),
-                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
-                        };
-                        for (int j = 0; j < championshipResult.Events; j++)
-                        {
-                            var eventPoints = new EventPoints
-                            {
-                                Position = int.Parse(split[3 * j + 3]),
-                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
-                                FastestLap= int.Parse(split[3 * j + 5])
-                            };
-                            competitorChampionship.Points.Add(eventPoints);
-                        }
-                        championshipResult.Overall.Add(competitorChampionship);
-                    }
-                 }
+                    championshipResult.Overall.AddRange(ClassResults(championshipResult.Events, 9, championshipResult.OverallCompetitors, lines));
+                }
 
                 //Skip one line then reads N2 results based on number of Overall competitors
                 int firstCompetitor = 9 + championshipResult.OverallCompetitors + 1;
                 if (championshipResult.N2Competitors > 0)
                 {
                     championshipResult.N2 = new List<CompetitorChampionship>();
-                    //First competitor on N2 class is on line # 9 + OverallCompetitors + 1
-                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.N2Competitors; i++)
-                    {
-                        string[] split = lines[i].Split(',');
-                        var competitorChampionship = new CompetitorChampionship
-                        {
-                            Number = int.Parse(split[0]),
-                            Name = split[1],
-                            Car = split[2],
-                            Points = new List<EventPoints>(),
-                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
-                        };
-                        for (int j = 0; j < championshipResult.Events; j++)
-                        {
-                            var eventPoints = new EventPoints
-                            {
-                                Position = int.Parse(split[3 * j + 3]),
-                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
-                                FastestLap = int.Parse(split[3 * j + 5])
-                            };
-                            competitorChampionship.Points.Add(eventPoints);
-                        }
-                        championshipResult.N2.Add(competitorChampionship);
-                    }
+                    championshipResult.N2.AddRange(ClassResults(championshipResult.Events, firstCompetitor, championshipResult.N2Competitors, lines));
                 }
 
                 //Skip one line then reads N4 results based on number of N2 competitors
@@ -95,30 +49,7 @@ namespace AxwareERC
                 if (championshipResult.N4Competitors > 0)
                 {
                     championshipResult.N4 = new List<CompetitorChampionship>();
-                    //First competitor on N2 class is on line # 9 + OverallCompetitors + 1
-                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.N4Competitors; i++)
-                    {
-                        string[] split = lines[i].Split(',');
-                        var competitorChampionship = new CompetitorChampionship
-                        {
-                            Number = int.Parse(split[0]),
-                            Name = split[1],
-                            Car = split[2],
-                            Points = new List<EventPoints>(),
-                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
-                        };
-                        for (int j = 0; j < championshipResult.Events; j++)
-                        {
-                            var eventPoints = new EventPoints
-                            {
-                                Position = int.Parse(split[3 * j + 3]),
-                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
-                                FastestLap = int.Parse(split[3 * j + 5])
-                            };
-                            competitorChampionship.Points.Add(eventPoints);
-                        }
-                        championshipResult.N4.Add(competitorChampionship);
-                    }
+                    championshipResult.N4.AddRange(ClassResults(championshipResult.Events, firstCompetitor, championshipResult.N4Competitors, lines));
                 }
 
                 //Skip one line then reads E2 results based on number of N4 competitors
@@ -126,30 +57,7 @@ namespace AxwareERC
                 if (championshipResult.E2Competitors > 0)
                 {
                     championshipResult.E2 = new List<CompetitorChampionship>();
-                    //First competitor on E2 class is after firstN4Competitor + championshipResult.N4Competitors + 1
-                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.E2Competitors; i++)
-                    {
-                        string[] split = lines[i].Split(',');
-                        var competitorChampionship = new CompetitorChampionship
-                        {
-                            Number = int.Parse(split[0]),
-                            Name = split[1],
-                            Car = split[2],
-                            Points = new List<EventPoints>(),
-                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
-                        };
-                        for (int j = 0; j < championshipResult.Events; j++)
-                        {
-                            var eventPoints = new EventPoints
-                            {
-                                Position = int.Parse(split[3 * j + 3]),
-                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
-                                FastestLap = int.Parse(split[3 * j + 5])
-                            };
-                            competitorChampionship.Points.Add(eventPoints);
-                        }
-                        championshipResult.E2.Add(competitorChampionship);
-                    }
+                    championshipResult.E2.AddRange(ClassResults(championshipResult.Events, firstCompetitor, championshipResult.E2Competitors, lines));
                 }
 
                 //Skip one line then reads E4 results based on number of E2 competitors
@@ -157,29 +65,7 @@ namespace AxwareERC
                 if (championshipResult.E4Competitors > 0)
                 {
                     championshipResult.E4 = new List<CompetitorChampionship>();
-                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.E4Competitors; i++)
-                    {
-                        string[] split = lines[i].Split(',');
-                        var competitorChampionship = new CompetitorChampionship
-                        {
-                            Number = int.Parse(split[0]),
-                            Name = split[1],
-                            Car = split[2],
-                            Points = new List<EventPoints>(),
-                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
-                        };
-                        for (int j = 0; j < championshipResult.Events; j++)
-                        {
-                            var eventPoints = new EventPoints
-                            {
-                                Position = int.Parse(split[3 * j + 3]),
-                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
-                                FastestLap = int.Parse(split[3 * j + 5])
-                            };
-                            competitorChampionship.Points.Add(eventPoints);
-                        }
-                        championshipResult.E4.Add(competitorChampionship);
-                    }
+                    championshipResult.E4.AddRange(ClassResults(championshipResult.Events, firstCompetitor, championshipResult.E4Competitors, lines));
                 }
 
                 //Skip one line then reads Pro results based on number of E4 competitors
@@ -187,30 +73,7 @@ namespace AxwareERC
                 if (championshipResult.ProCompetitors > 0)
                 {
                     championshipResult.Pro = new List<CompetitorChampionship>();
-                    //First competitor on E2 class is after firstN4Competitor + championshipResult.N4Competitors + 1
-                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.ProCompetitors; i++)
-                    {
-                        string[] split = lines[i].Split(',');
-                        var competitorChampionship = new CompetitorChampionship
-                        {
-                            Number = int.Parse(split[0]),
-                            Name = split[1],
-                            Car = split[2],
-                            Points = new List<EventPoints>(),
-                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
-                        };
-                        for (int j = 0; j < championshipResult.Events; j++)
-                        {
-                            var eventPoints = new EventPoints
-                            {
-                                Position = int.Parse(split[3 * j + 3]),
-                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
-                                FastestLap = int.Parse(split[3 * j + 5])
-                            };
-                            competitorChampionship.Points.Add(eventPoints);
-                        }
-                        championshipResult.Pro.Add(competitorChampionship);
-                    }
+                    championshipResult.Pro.AddRange(ClassResults(championshipResult.Events, firstCompetitor, championshipResult.ProCompetitors, lines));
                 }
 
                 //Skip one line then reads Truck results based on number of Pro competitors
@@ -218,29 +81,7 @@ namespace AxwareERC
                 if (championshipResult.TruckCompetitors > 0)
                 {
                     championshipResult.Truck = new List<CompetitorChampionship>();
-                    for (int i = firstCompetitor; i < firstCompetitor + championshipResult.TruckCompetitors; i++)
-                    {
-                        string[] split = lines[i].Split(',');
-                        var competitorChampionship = new CompetitorChampionship
-                        {
-                            Number = int.Parse(split[0]),
-                            Name = split[1],
-                            Car = split[2],
-                            Points = new List<EventPoints>(),
-                            Total = int.Parse(split[championshipResult.Events * 3 + 3])
-                        };
-                        for (int j = 0; j < championshipResult.Events; j++)
-                        {
-                            var eventPoints = new EventPoints
-                            {
-                                Position = int.Parse(split[3 * j + 3]),
-                                CompetitorsInClass = int.Parse(split[3 * j + 4]),
-                                FastestLap = int.Parse(split[3 * j + 5])
-                            };
-                            competitorChampionship.Points.Add(eventPoints);
-                        }
-                        championshipResult.Truck.Add(competitorChampionship);
-                    }
+                    championshipResult.Truck.AddRange(ClassResults(championshipResult.Events, firstCompetitor, championshipResult.TruckCompetitors, lines));
                 }
 
                 return championshipResult;
@@ -308,6 +149,7 @@ namespace AxwareERC
                         writer.Flush();
                     };
                     stream.Close();
+                    return true;
                 };
             }
             catch (Exception e)
@@ -317,32 +159,312 @@ namespace AxwareERC
             return false;
         }
 
+        public static Championship Calculate(List<CompetitorResult> overallCompetitors,
+            List<CompetitorResult> n2Competitors,
+            List<CompetitorResult> n4Competitors,
+            List<CompetitorResult> e2Competitors,
+            List<CompetitorResult> e4Competitors,
+            List<CompetitorResult> proCompetitors,
+            List<CompetitorResult> truckCompetitors)
+        {
+            // First event of the season
+            var championship = new Championship
+            {
+                Events = 1,
+                OverallCompetitors = overallCompetitors.Count(),
+                N2Competitors = n2Competitors.Count(),
+                N4Competitors = n4Competitors.Count(),
+                E2Competitors = e2Competitors.Count(),
+                E4Competitors = e4Competitors.Count(),
+                ProCompetitors = proCompetitors.Count(),
+                TruckCompetitors = truckCompetitors.Count()
+            };
+
+            // Overall results
+            championship.Overall = new List<CompetitorChampionship>();
+            foreach (var competitor in overallCompetitors)
+            {
+                var competitorChampionship = new CompetitorChampionship()
+                {
+                    Number = competitor.Number,
+                    Car = competitor.Car,
+                    Name = competitor.Name,
+                    Points = new List<EventPoints>(),
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                };
+                EventPoints ep = new EventPoints()
+                {
+                    Position = competitor.PositionPoints,
+                    CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                    FastestLap = competitor.FastestLapPoints
+                };
+                competitorChampionship.Points.Add(ep);
+                championship.Overall.Add(competitorChampionship);
+            };
+
+            // N2 results
+            championship.N2 = new List<CompetitorChampionship>();
+            foreach (var competitor in n2Competitors)
+            {
+                var competitorChampionship = new CompetitorChampionship
+                {
+                    Number = competitor.Number,
+                    Car = competitor.Car,
+                    Name = competitor.Name,
+                    Points = new List<EventPoints>(),
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                };
+                EventPoints ep = new EventPoints()
+                {
+                    Position = competitor.PositionPoints,
+                    CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                    FastestLap = competitor.FastestLapPoints
+                };
+                competitorChampionship.Points.Add(ep); championship.N2.Add(competitorChampionship);
+            };
+
+            // N4 results
+            championship.N4 = new List<CompetitorChampionship>();
+            foreach (var competitor in n4Competitors)
+            {
+                var competitorChampionship = new CompetitorChampionship
+                {
+                    Number = competitor.Number,
+                    Car = competitor.Car,
+                    Name = competitor.Name,
+                    Points = new List<EventPoints>(),
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                };
+                EventPoints ep = new EventPoints()
+                {
+                    Position = competitor.PositionPoints,
+                    CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                    FastestLap = competitor.FastestLapPoints
+                };
+                competitorChampionship.Points.Add(ep); championship.N4.Add(competitorChampionship);
+            };
+
+            // E2 results
+            championship.E2 = new List<CompetitorChampionship>();
+            foreach (var competitor in e2Competitors)
+            {
+                var competitorChampionship = new CompetitorChampionship
+                {
+                    Number = competitor.Number,
+                    Car = competitor.Car,
+                    Name = competitor.Name,
+                    Points = new List<EventPoints>(),
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                };
+                EventPoints ep = new EventPoints()
+                {
+                    Position = competitor.PositionPoints,
+                    CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                    FastestLap = competitor.FastestLapPoints
+                };
+                competitorChampionship.Points.Add(ep); championship.E2.Add(competitorChampionship);
+            };
+
+            // E4 results
+            championship.E4 = new List<CompetitorChampionship>();
+            foreach (var competitor in e4Competitors)
+            {
+                var competitorChampionship = new CompetitorChampionship
+                {
+                    Number = competitor.Number,
+                    Car = competitor.Car,
+                    Name = competitor.Name,
+                    Points = new List<EventPoints>(),
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                };
+                EventPoints ep = new EventPoints()
+                {
+                    Position = competitor.PositionPoints,
+                    CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                    FastestLap = competitor.FastestLapPoints
+                };
+                competitorChampionship.Points.Add(ep); championship.E4.Add(competitorChampionship);
+            };
+
+            // Pro results
+            championship.Pro = new List<CompetitorChampionship>();
+            foreach (var competitor in proCompetitors)
+            {
+                var competitorChampionship = new CompetitorChampionship
+                {
+                    Number = competitor.Number,
+                    Car = competitor.Car,
+                    Name = competitor.Name,
+                    Points = new List<EventPoints>(),
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                };
+                EventPoints ep = new EventPoints()
+                {
+                    Position = competitor.PositionPoints,
+                    CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                    FastestLap = competitor.FastestLapPoints
+                };
+                competitorChampionship.Points.Add(ep); championship.Pro.Add(competitorChampionship);
+            };
+
+            // Truck results
+            championship.Truck = new List<CompetitorChampionship>();
+            foreach (var competitor in truckCompetitors)
+            {
+                var competitorChampionship = new CompetitorChampionship
+                {
+                    Number = competitor.Number,
+                    Car = competitor.Car,
+                    Name = competitor.Name,
+                    Points = new List<EventPoints>(),
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                };
+                EventPoints ep = new EventPoints()
+                {
+                    Position = competitor.PositionPoints,
+                    CompetitorsInClass = competitor.CompetitorsInClassPoints,
+                    FastestLap = competitor.FastestLapPoints
+                };
+                competitorChampionship.Points.Add(ep); championship.Truck.Add(competitorChampionship);
+            };
+
+            return championship;
+        }
+        public static bool MergeResults(ref Championship championshipPreviousResults, Championship championship)
+        {
+            // Increment event number
+            championshipPreviousResults.Events++;
+
+            //Merge overall results
+            championshipPreviousResults.Overall = MergeClassResults(championshipPreviousResults.Overall, championship.Overall);
+            championshipPreviousResults.N2 = MergeClassResults(championshipPreviousResults.N2, championship.N2);
+            championshipPreviousResults.N4 = MergeClassResults(championshipPreviousResults.N4, championship.N4);
+            championshipPreviousResults.E2 = MergeClassResults(championshipPreviousResults.E2, championship.E2);
+            championshipPreviousResults.E4 = MergeClassResults(championshipPreviousResults.E4, championship.E4);
+            championshipPreviousResults.Pro = MergeClassResults(championshipPreviousResults.Pro, championship.Pro);
+            championshipPreviousResults.Truck = MergeClassResults(championshipPreviousResults.Truck, championship.Truck);
+
+            // Reorder results based on total points
+
+            return false;
+        }
+
+        public static List<CompetitorChampionship> MergeClassResults(List<CompetitorChampionship> previousClassResults, List<CompetitorChampionship> currentClassResults)
+        {
+            foreach (var currentResult in currentClassResults)
+            {
+                int i = 0;
+                //var test = from previousResult in championshipPreviousResults where previousResult.Car == currentResult.Car select previousResult.FirstOrDefault();
+                while (currentResult.Number != previousClassResults[i].Number)
+                {
+                    i++;
+                    continue;
+                }
+
+                if (currentResult.Number == previousClassResults[i].Number)
+                {
+                    // Found competitor
+                    // Add event points to the championship results
+                    previousClassResults[i].Points.Add(currentResult.Points.First());
+                    // Sum points but remove the worst result
+                    previousClassResults[i].Total = CalculateTotalPoints(previousClassResults[i].Points);
+                }
+                else
+                {
+                    // Not found. Add another competitor to the results or continue searching (different number?)
+                }
+            }
+            return previousClassResults;
+        }
+
+        private static int CalculateTotalPoints(List<EventPoints> eventPoints)
+        {
+            int totalPoints = 0;
+            int count = 0;
+            int minimumPoints = int.MaxValue;
+
+            foreach (var points in eventPoints)
+            {
+                // Skip if is null
+                if (!points.Position.HasValue)
+                    continue;
+
+                int total = points.Position.Value + points.CompetitorsInClass.Value + points.FastestLap.Value;
+
+                if (total < minimumPoints)
+                    minimumPoints = total;
+
+                totalPoints += total;
+                count++;
+            }
+            // Remove the worst result if more than one event and user attended all
+            if (count > 1 && count == eventPoints.Count())
+                totalPoints -= minimumPoints;
+
+            return totalPoints;
+        }
+
+        private static List<CompetitorChampionship> ClassResults(int events, int firstCompetitor, int classCompetitors, string[] lines)
+        {
+            var classResult = new List<CompetitorChampionship>();
+            for (int i = firstCompetitor; i < firstCompetitor + classCompetitors; i++)
+            {
+                string[] split = lines[i].Split(',');
+                var competitorChampionship = new CompetitorChampionship
+                {
+                    Number = int.Parse(split[0]),
+                    Name = split[1],
+                    Car = split[2],
+                    Points = new List<EventPoints>(),
+                    Total = int.Parse(split[events * 3 + 3])
+                };
+                for (int j = 0; j < events; j++)
+                {
+                    var eventPoints = new EventPoints
+                    {
+                        Position = Int32.TryParse(split[3 * j + 3], out int tempVal) ? Int32.Parse(split[3 * j + 3]) : (int?)null,
+                        CompetitorsInClass = Int32.TryParse(split[3 * j + 4], out tempVal) ? Int32.Parse(split[3 * j + 4]) : (int?)null,
+                        FastestLap = Int32.TryParse(split[3 * j + 5], out tempVal) ? Int32.Parse(split[3 * j + 5]) : (int?)null
+                    };
+                    competitorChampionship.Points.Add(eventPoints);
+                }
+                classResult.Add(competitorChampionship);
+            }
+            return classResult;
+        }
+
         private static string ToCsvValues(string separator, FieldInfo[] fields, object o)
         {
             StringBuilder linie = new StringBuilder();
+            bool previousNull = false;
 
             foreach (var f in fields)
             {
-                if (linie.Length > 0)
+                if (linie.Length > 0 || previousNull)
                     linie.Append(",");
 
                 var x = f.GetValue(o);
-
                 if (x != null)
                 {
+                    previousNull = false;
+
                     if (x.GetType().IsGenericType)
                     {
                         // Object is a list
                         // It is assumed that is an EventPoints list. If other type is parsed, it will break
+                        bool multiple = false;
                         foreach(var points in x as IList<EventPoints>)
                         {
+                            if (multiple) 
+                                linie.Append(",");
+
                             Type t = points.GetType();
                             FieldInfo[] epFields = t.GetFields(BindingFlags.Instance |
                                BindingFlags.Static |
                                BindingFlags.NonPublic |
                                BindingFlags.Public);
-                            var test = ToCsvValues(",", epFields, points);
-                            linie.Append(test);
+                            linie.Append(ToCsvValues(",", epFields, points));
+                            multiple = true;
                         }
 
                     }
@@ -350,6 +472,10 @@ namespace AxwareERC
                     {
                         linie.Append(x.ToString());
                     }
+                }
+                else
+                {
+                    previousNull = true;
                 }
 
             }

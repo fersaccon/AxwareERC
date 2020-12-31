@@ -8,8 +8,8 @@ namespace AxwareERC.Objects
 {
     public class EventPoints
     {
-        public int Position { get; set; }
-        public int CompetitorsInClass { get; set; }
-        public int FastestLap { get; set; }
+        public int? Position { get; set; }
+        public int? CompetitorsInClass { get; set; }
+        public int? FastestLap { get; set; }
     }
 }
