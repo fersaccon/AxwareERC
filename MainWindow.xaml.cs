@@ -14,11 +14,20 @@ namespace AxwareERC
     /// </summary>
     public partial class MainWindow : Window
     {
+        bool finalResultsGenerated = false;
+        // Holders for competitors results
+        List<CompetitorResult> overallCompetitors = new List<CompetitorResult>();
+        List<CompetitorResult> n2Competitors = new List<CompetitorResult>();
+        List<CompetitorResult> n4Competitors = new List<CompetitorResult>();
+        List<CompetitorResult> e2Competitors = new List<CompetitorResult>();
+        List<CompetitorResult> e4Competitors = new List<CompetitorResult>();
+        List<CompetitorResult> proCompetitors = new List<CompetitorResult>();
+        List<CompetitorResult> truckCompetitors = new List<CompetitorResult>();
+
         static string path;
         static string filename;
 
         private static ViewModel _vm;
-        //private static List<Competitor> competitorsRawResults = new List<Competitor>();
         private static List<CompetitorViewModel> competitorsResults = new List<CompetitorViewModel>();
 
         public MainWindow()
@@ -29,6 +38,7 @@ namespace AxwareERC
             this.DataContext = _vm;
 
             DataGrid1.DataContext = competitorsResults;
+            DataGrid1.FrozenColumnCount = 2;
         }
 
         private double singleTimeValidation(ref string timeString, string penalties)
@@ -38,7 +48,7 @@ namespace AxwareERC
                 if (Convert.ToDouble(timeString) > 300.0)
                     timeString = "300.000";
                 var time = Convert.ToDouble(timeString);
-                
+
                 if (penalties != "")
                     timeString += " (" + penalties + ")";
 
@@ -216,6 +226,15 @@ namespace AxwareERC
                         break;
                 }
             }
+            // Does not work for some reason - hide not in use time columns
+            //for (int k = 1; k <= maxNumberOfTimes; k++)
+            //{
+            //    DataGrid1.Columns[k + 5].Visibility = Visibility.Visible;
+            //}
+            //for (int k = maxNumberOfTimes; k <= 20; k++)
+            //{
+            //    DataGrid1.Columns[k + 5].Visibility = Visibility.Collapsed;
+            //}
             return competitorsProcessedResults.OrderBy(o => o.Overall).ToList();
         }
 
@@ -242,17 +261,8 @@ namespace AxwareERC
             List<double> proCompetitorTimes = new List<double>();
             List<double> truckCompetitorTimes = new List<double>();
 
-            // Holders for competitors results
-            List<CompetitorResult> overallCompetitors = new List<CompetitorResult>();
-            List<CompetitorResult> n2Competitors = new List<CompetitorResult>();
-            List<CompetitorResult> n4Competitors = new List<CompetitorResult>();
-            List<CompetitorResult> e2Competitors = new List<CompetitorResult>();
-            List<CompetitorResult> e4Competitors = new List<CompetitorResult>();
-            List<CompetitorResult> proCompetitors = new List<CompetitorResult>();
-            List<CompetitorResult> truckCompetitors = new List<CompetitorResult>();
-
             // Container to hold calculated results, but unordered
-          //  List<CompetitorResult> competitorsProcessedResults = new List<CompetitorResult>();
+            //  List<CompetitorResult> competitorsProcessedResults = new List<CompetitorResult>();
             int competitorIndex = 0;
 
             // First find how many runs each competitor have completed and find the maximum value;
@@ -298,7 +308,7 @@ namespace AxwareERC
                     i++;
                 }
 
-                // Update view model with times + penalty
+                // Update result field with times + penalty
                 competitorFinalResult.Time1 = timesStr[0];
                 competitorFinalResult.Time2 = timesStr[1];
                 competitorFinalResult.Time3 = timesStr[2];
@@ -381,7 +391,7 @@ namespace AxwareERC
                         break;
                 }
                 // Clone the object, so it can be used in two different lists independently
-                overallCompetitors.Add((CompetitorResult) competitorFinalResult.Clone());
+                overallCompetitors.Add((CompetitorResult)competitorFinalResult.Clone());
                 competitorIndex++;
             }
 
@@ -479,8 +489,7 @@ namespace AxwareERC
             return CompetitorService.WriteResultsFile(Path.Combine(path, "ERCresult.csv"), overallCompetitors, n2Competitors, n4Competitors, e2Competitors, e4Competitors, proCompetitors, truckCompetitors);
         }
 
-
-        private void openFileClick (object sender, RoutedEventArgs e)
+        private void openFileClick(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Axware RGG files (*.rgg)|*.rgg";
@@ -513,17 +522,184 @@ namespace AxwareERC
 
         private void generateResults(object sender, RoutedEventArgs e)
         {
-            // Generate ERC results (under development) 
+            // Generate ERC results
             if (path != null)
             {
                 if (generateFinalResults(CompetitorService.ReadFile(Path.Combine(path, filename))))
+                {
+                    // Set final results flag as true - it is used to determine if championship points can be updated
+                    finalResultsGenerated = true;
                     MessageBox.Show("Resuls saved to:\n" + Path.Combine(path, "ERCresult.csv"), "Success");
+
+                }
             }
             else
-                MessageBox.Show("No results to calculate","Error");
+                MessageBox.Show("No results to calculate", "Error");
         }
 
+        private void updateChampionshipPoints(object sender, RoutedEventArgs e)
+        {
+            if (!finalResultsGenerated)
+            {
+                MessageBox.Show("You must calculate current event results first", "Error");
+                return;
+            }
 
+            var dr = MessageBox.Show("This action can only be done once per event. There is no rollback unless you backup the current championship results file.\n" +
+                "Do you want to continue?", "Warning", MessageBoxButton.YesNo);
+            if (dr == MessageBoxResult.Yes)
+            {
+                dr = MessageBox.Show("Is this the first event of the season? \n" +
+                    "(If 'No', load the previous result file)", "Input needed", MessageBoxButton.YesNo);
+                if (dr == MessageBoxResult.No)
+                {
+                    OpenFileDialog openFileDialog = new OpenFileDialog();
+                    openFileDialog.Filter = "ERC Championship file (*.erc)|*.erc";
+
+                    // Update championship points
+                    if (openFileDialog.ShowDialog() == true)
+                    {
+                        var fullDir = openFileDialog.FileName;
+                        var championshipResults = ChampionshipService.ReadFile(fullDir);
+
+                        // Verify how many event results were loaded and warn the user
+
+                        // Merge current results with previous records
+                    }
+                    else
+                    {
+                        MessageBox.Show("Action cancelled: championship points not updated.","Warning");
+                        return;
+                    }
+
+                }
+                else
+                {
+                    if (dr == MessageBoxResult.Yes)
+                    {
+                        // First event of the season
+                        var championship = new Championship
+                        {
+                            Events = 1,
+                            OverallCompetitors = overallCompetitors.Count(),
+                            N2Competitors = n2Competitors.Count(),
+                            N4Competitors = n4Competitors.Count(),
+                            E2Competitors = e2Competitors.Count(),
+                            E4Competitors = e4Competitors.Count(),
+                            ProCompetitors = proCompetitors.Count(),
+                            TruckCompetitors = truckCompetitors.Count()
+                        };
+
+                        // Overall results
+                        championship.Overall = new List<CompetitorChampionship>();
+                        foreach (var competitor in overallCompetitors)
+                        {
+                            var competitorChampionship = new CompetitorChampionship()
+                            {
+                                Number = competitor.Number,
+                                Car = competitor.Car,
+                                Name = competitor.Name,
+                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
+                            championship.Overall.Add(competitorChampionship);
+                        };
+
+                        // N2 results
+                        championship.N2 = new List<CompetitorChampionship>();
+                        foreach (var competitor in n2Competitors)
+                        {
+                            var competitorChampionship = new CompetitorChampionship
+                            {
+                                Number = competitor.Number,
+                                Car = competitor.Car,
+                                Name = competitor.Name,
+                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
+                            championship.N2.Add(competitorChampionship);
+                        };
+
+                        // N4 results
+                        championship.N4 = new List<CompetitorChampionship>();
+                        foreach (var competitor in n4Competitors)
+                        {
+                            var competitorChampionship = new CompetitorChampionship
+                            {
+                                Number = competitor.Number,
+                                Car = competitor.Car,
+                                Name = competitor.Name,
+                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
+                            championship.N4.Add(competitorChampionship);
+                        };
+
+                        // E2 results
+                        championship.E2 = new List<CompetitorChampionship>();
+                        foreach (var competitor in e2Competitors)
+                        {
+                            var competitorChampionship = new CompetitorChampionship
+                            {
+                                Number = competitor.Number,
+                                Car = competitor.Car,
+                                Name = competitor.Name,
+                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
+                            championship.E2.Add(competitorChampionship);
+                        };
+
+                        // E4 results
+                        championship.E4 = new List<CompetitorChampionship>();
+                        foreach (var competitor in e4Competitors)
+                        {
+                            var competitorChampionship = new CompetitorChampionship
+                            {
+                                Number = competitor.Number,
+                                Car = competitor.Car,
+                                Name = competitor.Name,
+                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
+                            championship.E4.Add(competitorChampionship);
+                        };
+
+                        // Pro results
+                        championship.Pro = new List<CompetitorChampionship>();
+                        foreach (var competitor in proCompetitors)
+                        {
+                            var competitorChampionship = new CompetitorChampionship
+                            {
+                                Number = competitor.Number,
+                                Car = competitor.Car,
+                                Name = competitor.Name,
+                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
+                            championship.Pro.Add(competitorChampionship);
+                        };
+
+                        // Truck results
+                        championship.Truck = new List<CompetitorChampionship>();
+                        foreach (var competitor in truckCompetitors)
+                        {
+                            var competitorChampionship = new CompetitorChampionship
+                            {
+                                Number = competitor.Number,
+                                Car = competitor.Car,
+                                Name = competitor.Name,
+                                Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                            };
+                            competitorChampionship.Points = new int[3] { competitor.PositionPoints, competitor.CompetitorsInClassPoints, competitor.FastestLapPoints };
+                            championship.Truck.Add(competitorChampionship);
+                        };
+
+                        ChampionshipService.WriteFile(Path.Combine(path, "Championship.erc"), championship);
+                    }
+                }
+            }
+        }
         public void CreateFileWatcher(string path, string filename)
         {
             // Create a new FileSystemWatcher and set its properties.
@@ -560,10 +736,9 @@ namespace AxwareERC
             // Update window title to reflect changes
             var lastUpdated = File.GetLastWriteTime(Path.Combine(path, filename));
             _vm.AppTitle = string.Concat("ERC Axware - last updated: ", lastUpdated.ToString());
+            finalResultsGenerated = false;
         }
     }
-
-
 }
 
 namespace ExtendedControls

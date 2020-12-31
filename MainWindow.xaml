@@ -16,6 +16,9 @@
             <MenuItem Header="_Results">
                 <MenuItem Header="_Generate" Click="generateResults" />
             </MenuItem>
+            <MenuItem Header="_Championship">
+                <MenuItem Header="_Update championship points" Click="updateChampionshipPoints" />
+            </MenuItem>
             <MenuItem Header="_Window">
                 <MenuItem Header="_Maximize on second display" Click="maximizeSecondDisplay" />
             </MenuItem>
