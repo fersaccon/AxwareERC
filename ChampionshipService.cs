@@ -336,32 +336,50 @@ namespace AxwareERC
             championshipPreviousResults.Events++;
 
             //Merge overall results
-            championshipPreviousResults.Overall = MergeClassResults(championshipPreviousResults.Overall, championship.Overall);
-            championshipPreviousResults.N2 = MergeClassResults(championshipPreviousResults.N2, championship.N2);
-            championshipPreviousResults.N4 = MergeClassResults(championshipPreviousResults.N4, championship.N4);
-            championshipPreviousResults.E2 = MergeClassResults(championshipPreviousResults.E2, championship.E2);
-            championshipPreviousResults.E4 = MergeClassResults(championshipPreviousResults.E4, championship.E4);
-            championshipPreviousResults.Pro = MergeClassResults(championshipPreviousResults.Pro, championship.Pro);
-            championshipPreviousResults.Truck = MergeClassResults(championshipPreviousResults.Truck, championship.Truck);
+            championshipPreviousResults.Overall = MergeClassResults(championshipPreviousResults.Overall, championship.Overall, championshipPreviousResults.Events);
+            championshipPreviousResults.N2 = MergeClassResults(championshipPreviousResults.N2, championship.N2, championshipPreviousResults.Events);
+            championshipPreviousResults.N4 = MergeClassResults(championshipPreviousResults.N4, championship.N4, championshipPreviousResults.Events);
+            championshipPreviousResults.E2 = MergeClassResults(championshipPreviousResults.E2, championship.E2, championshipPreviousResults.Events);
+            championshipPreviousResults.E4 = MergeClassResults(championshipPreviousResults.E4, championship.E4, championshipPreviousResults.Events);
+            championshipPreviousResults.Pro = MergeClassResults(championshipPreviousResults.Pro, championship.Pro, championshipPreviousResults.Events);
+            championshipPreviousResults.Truck = MergeClassResults(championshipPreviousResults.Truck, championship.Truck, championshipPreviousResults.Events);
+
+            // Update competitor count
+            championshipPreviousResults.OverallCompetitors = championshipPreviousResults.Overall.Count();
+            championshipPreviousResults.N2Competitors = championshipPreviousResults.N2.Count();
+            championshipPreviousResults.N4Competitors = championshipPreviousResults.N4.Count();
+            championshipPreviousResults.E2Competitors = championshipPreviousResults.E2.Count();
+            championshipPreviousResults.E4Competitors = championshipPreviousResults.E4.Count();
+            championshipPreviousResults.ProCompetitors = championshipPreviousResults.Pro.Count();
+            championshipPreviousResults.TruckCompetitors = championshipPreviousResults.Truck.Count();
 
             // Reorder results based on total points
 
             return false;
         }
 
-        public static List<CompetitorChampionship> MergeClassResults(List<CompetitorChampionship> previousClassResults, List<CompetitorChampionship> currentClassResults)
+        public static List<CompetitorChampionship> MergeClassResults(List<CompetitorChampionship> previousClassResults, List<CompetitorChampionship> currentClassResults, int events)
         {
+            List<int> competitorNumberList = new List<int>();
+
+            bool found = false;
             foreach (var currentResult in currentClassResults)
             {
+                competitorNumberList.Add(currentResult.Number);
                 int i = 0;
                 //var test = from previousResult in championshipPreviousResults where previousResult.Car == currentResult.Car select previousResult.FirstOrDefault();
-                while (currentResult.Number != previousClassResults[i].Number)
+                while (i < previousClassResults.Count())
                 {
+                    if (currentResult.Number == previousClassResults[i].Number)
+                    {
+                        found = true;
+                        break;
+                    }
+
                     i++;
-                    continue;
                 }
 
-                if (currentResult.Number == previousClassResults[i].Number)
+                if (found)
                 {
                     // Found competitor
                     // Add event points to the championship results
@@ -372,8 +390,28 @@ namespace AxwareERC
                 else
                 {
                     // Not found. Add another competitor to the results or continue searching (different number?)
+                    var eventPoints = new EventPoints();
+                    for (int j = 0; j < events - 1;j++)
+                        currentResult.Points.Insert(0, eventPoints);
+
+                    previousClassResults.Add(currentResult);
                 }
             }
+
+            //Iterate over results list and add null points to competitors that did not attend the current event
+            foreach (var currentResult in previousClassResults)
+            {
+                if (!competitorNumberList.Contains(currentResult.Number))
+                {
+                    var eventPoints = new EventPoints();
+                    for (int j = currentResult.Points.Count(); j < events; j++)
+                        currentResult.Points.Add(eventPoints);
+                }
+            }
+
+            //Reorder list by points
+            previousClassResults = previousClassResults.OrderByDescending(o => o.Total).ToList();
+
             return previousClassResults;
         }
 
