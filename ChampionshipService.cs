@@ -372,8 +372,24 @@ namespace AxwareERC
                 {
                     if (currentResult.Number == previousClassResults[i].Number)
                     {
-                        found = true;
-                        break;
+                        // Names match, so it can proceed
+                        if (currentResult.Name == previousClassResults[i].Name)
+                        {
+                            found = true;
+                            break;
+                        }
+                        else
+                        {
+                            //Throw message to verify if the competitors are the same
+                            var dr = MessageBox.Show("A competitor with same car number was found (#" + currentResult.Number + "). Previous competitor: " + previousClassResults[i].Name + ", current competitor: " + currentResult.Name +
+                                ".\nDo you want to merge results?", "Attention required", MessageBoxButtons.YesNo);
+                            if(dr == DialogResult.Yes)
+                            {
+                                // If yes, stop the search and merge the results. Otherwise keep looking until another competitor is found (if found). Duplicated numbers will be created
+                                found = true;
+                                break;
+                            }
+                        }
                     }
 
                     i++;
