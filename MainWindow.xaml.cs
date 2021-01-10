@@ -308,6 +308,16 @@ namespace AxwareERC
                     i++;
                 }
 
+                // If competitor has less timed runs than the maximum number of timed runs, add 300s to the missed runs
+                if (times.Count(k => k > 0) < maxNumberOfTimes)
+                {
+                    for (int j = times.Count(k => k > 0); j < maxNumberOfTimes; j++)
+                    {
+                        times[j] = 300;
+                        timesStr[j] = "300.000";
+                    }
+                }
+
                 // Update result field with times + penalty
                 competitorFinalResult.Time1 = timesStr[0];
                 competitorFinalResult.Time2 = timesStr[1];
@@ -330,12 +340,7 @@ namespace AxwareERC
                 competitorFinalResult.Time19 = timesStr[18];
                 competitorFinalResult.Time20 = timesStr[19];
 
-                // If competitor has less timed runs than the maximum number of timed runs, add 300s to the missed runs
-                if (times.Count(k => k > 0) < maxNumberOfTimes)
-                {
-                    for (int j = times.Count(k => k > 0); j < maxNumberOfTimes; j++)
-                        times[j] = 300;
-                }
+
                 overallCompetitorTimes[competitorIndex] = times.Sum() - times.Max();
 
                 // Raw time (all summed up)
