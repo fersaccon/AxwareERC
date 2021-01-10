@@ -84,6 +84,7 @@ namespace AxwareERC
                     maxNumberOfTimes = numberOfTimes;
             }
 
+
             // Calculate total time and position for each competitor
             foreach (CompetitorAxware competitor in competitorsRawResults)
             {
@@ -96,87 +97,96 @@ namespace AxwareERC
                     Number = competitor.Number
                 };
 
-                var timeList = new List<string> { competitor.Run1, competitor.Run2, competitor.Run3,competitor.Run4,competitor.Run5,competitor.Run6,competitor.Run7,competitor.Run8, competitor.Run9,competitor.Run10,competitor.Run11,
-                    competitor.Run12,competitor.Run13,competitor.Run14,competitor.Run15,competitor.Run16,competitor.Run17,competitor.Run18,competitor.Run19,competitor.Run20 };
-                var penaltyList = new List<string> { competitor.Pen1, competitor.Pen2, competitor.Pen3, competitor.Pen4, competitor.Pen5, competitor.Pen6, competitor.Pen7, competitor.Pen8, competitor.Pen9, competitor.Pen10,
-                    competitor.Pen11, competitor.Pen12,competitor.Pen13, competitor.Pen14,competitor.Pen15, competitor.Pen16,competitor.Pen17, competitor.Pen18,competitor.Pen19, competitor.Pen20};
-
-                // Add times to an array
-                int i = 0;
-                foreach (var time in timeList)
+                if (maxNumberOfTimes > 0)
                 {
-                    timesStr[i] = time;
-                    i++;
-                }
+                    var timeList = new List<string> { competitor.Run1, competitor.Run2, competitor.Run3,competitor.Run4,competitor.Run5,competitor.Run6,competitor.Run7,competitor.Run8, competitor.Run9,competitor.Run10,competitor.Run11,
+                        competitor.Run12,competitor.Run13,competitor.Run14,competitor.Run15,competitor.Run16,competitor.Run17,competitor.Run18,competitor.Run19,competitor.Run20 };
+                    var penaltyList = new List<string> { competitor.Pen1, competitor.Pen2, competitor.Pen3, competitor.Pen4, competitor.Pen5, competitor.Pen6, competitor.Pen7, competitor.Pen8, competitor.Pen9, competitor.Pen10,
+                        competitor.Pen11, competitor.Pen12,competitor.Pen13, competitor.Pen14,competitor.Pen15, competitor.Pen16,competitor.Pen17, competitor.Pen18,competitor.Pen19, competitor.Pen20};
 
-                // Update time string with penalties (if applicable). Times over 300s or Off-course are capped
-                i = 0;
-                foreach (string penalty in penaltyList)
-                {
-                    times[i] = singleTimeValidation(ref timesStr[i], penalty);
-                    i++;
-                }
+                    // Add times to an array
+                    int i = 0;
+                    foreach (var time in timeList)
+                    {
+                        timesStr[i] = time;
+                        i++;
+                    }
 
-                // Update view model with times + penalty
-                competitorViewModel.Time1 = timesStr[0];
-                competitorViewModel.Time2 = timesStr[1];
-                competitorViewModel.Time3 = timesStr[2];
-                competitorViewModel.Time4 = timesStr[3];
-                competitorViewModel.Time5 = timesStr[4];
-                competitorViewModel.Time6 = timesStr[5];
-                competitorViewModel.Time7 = timesStr[6];
-                competitorViewModel.Time8 = timesStr[7];
-                competitorViewModel.Time9 = timesStr[8];
-                competitorViewModel.Time10 = timesStr[9];
-                competitorViewModel.Time11 = timesStr[10];
-                competitorViewModel.Time12 = timesStr[11];
-                competitorViewModel.Time13 = timesStr[12];
-                competitorViewModel.Time14 = timesStr[13];
-                competitorViewModel.Time15 = timesStr[14];
-                competitorViewModel.Time16 = timesStr[15];
-                competitorViewModel.Time17 = timesStr[16];
-                competitorViewModel.Time18 = timesStr[17];
-                competitorViewModel.Time19 = timesStr[18];
-                competitorViewModel.Time20 = timesStr[19];
+                    // Update time string with penalties (if applicable). Times over 300s or Off-course are capped
+                    i = 0;
+                    foreach (string penalty in penaltyList)
+                    {
+                        times[i] = singleTimeValidation(ref timesStr[i], penalty);
+                        i++;
+                    }
 
-                // If competitor has less timed runs than the maximum number of timed runs, add 300s to the missed runs
-                if (times.Count(k => k > 0) < maxNumberOfTimes)
-                {
-                    for (int j = times.Count(k => k > 0); j < maxNumberOfTimes; j++)
-                        times[j] = 300;
-                }
-                overallCompetitorTimes[competitorIndex] = times.Sum() - times.Max();
+                    // Update view model with times + penalty
+                    competitorViewModel.Time1 = timesStr[0];
+                    competitorViewModel.Time2 = timesStr[1];
+                    competitorViewModel.Time3 = timesStr[2];
+                    competitorViewModel.Time4 = timesStr[3];
+                    competitorViewModel.Time5 = timesStr[4];
+                    competitorViewModel.Time6 = timesStr[5];
+                    competitorViewModel.Time7 = timesStr[6];
+                    competitorViewModel.Time8 = timesStr[7];
+                    competitorViewModel.Time9 = timesStr[8];
+                    competitorViewModel.Time10 = timesStr[9];
+                    competitorViewModel.Time11 = timesStr[10];
+                    competitorViewModel.Time12 = timesStr[11];
+                    competitorViewModel.Time13 = timesStr[12];
+                    competitorViewModel.Time14 = timesStr[13];
+                    competitorViewModel.Time15 = timesStr[14];
+                    competitorViewModel.Time16 = timesStr[15];
+                    competitorViewModel.Time17 = timesStr[16];
+                    competitorViewModel.Time18 = timesStr[17];
+                    competitorViewModel.Time19 = timesStr[18];
+                    competitorViewModel.Time20 = timesStr[19];
 
-                // Raw time (all summed up)
-                competitorViewModel.RawTime = times.Sum();
-                //Discard the slowest time
-                competitorViewModel.MinusSlowest = times.Sum() - times.Max();
-                competitorViewModel.FastestLap = times.Where(f => f > 0).Min();
-                switch (competitor.Class)
-                {
-                    case CompetitionClass.n2:
-                        n2CompetitorTimes.Add(competitorViewModel.MinusSlowest);
-                        break;
-                    case CompetitionClass.n4:
-                        n4CompetitorTimes.Add(competitorViewModel.MinusSlowest);
-                        break;
-                    case CompetitionClass.e2:
-                        e2CompetitorTimes.Add(competitorViewModel.MinusSlowest);
-                        break;
-                    case CompetitionClass.e4:
-                        e4CompetitorTimes.Add(competitorViewModel.MinusSlowest);
-                        break;
-                    case CompetitionClass.pro:
-                    case CompetitionClass.p2:
-                    case CompetitionClass.p4:
-                        proCompetitorTimes.Add(competitorViewModel.MinusSlowest);
-                        break;
-                    case CompetitionClass.truck:
-                        truckCompetitorTimes.Add(competitorViewModel.MinusSlowest);
-                        break;
-                    default:
-                        break;
+                    // If competitor has less timed runs than the maximum number of timed runs, add 300s to the missed runs
+                    if (times.Count(k => k > 0) < maxNumberOfTimes)
+                    {
+                        for (int j = times.Count(k => k > 0); j < maxNumberOfTimes; j++)
+                            times[j] = 300;
+                    }
+
+                    // Raw time (all summed up)
+                    competitorViewModel.RawTime = times.Sum();
+                    //Discard the slowest time if competitor has more than one timed run
+                    if (maxNumberOfTimes > 1)
+                        competitorViewModel.MinusSlowest = times.Sum() - times.Max();
+                    else
+                        competitorViewModel.MinusSlowest = times.Sum();
+
+                    overallCompetitorTimes[competitorIndex] = competitorViewModel.MinusSlowest;
+                    competitorViewModel.FastestLap = times.Where(f => f > 0).Min();
                 }
+                    switch (competitor.Class)
+                    {
+                        case CompetitionClass.n2:
+                            n2CompetitorTimes.Add(competitorViewModel.MinusSlowest);
+                            break;
+                        case CompetitionClass.n4:
+                            n4CompetitorTimes.Add(competitorViewModel.MinusSlowest);
+                            break;
+                        case CompetitionClass.e2:
+                            e2CompetitorTimes.Add(competitorViewModel.MinusSlowest);
+                            break;
+                        case CompetitionClass.e4:
+                            e4CompetitorTimes.Add(competitorViewModel.MinusSlowest);
+                            break;
+                        case CompetitionClass.pro:
+                        case CompetitionClass.p2:
+                        case CompetitionClass.p4:
+                            proCompetitorTimes.Add(competitorViewModel.MinusSlowest);
+                            break;
+                        case CompetitionClass.truck:
+                            truckCompetitorTimes.Add(competitorViewModel.MinusSlowest);
+                            break;
+                        default:
+                            break;
+                    }
+
+                
                 competitorsProcessedResults.Add(competitorViewModel);
                 competitorIndex++;
             }
@@ -278,67 +288,74 @@ namespace AxwareERC
                     Number = competitor.Number
                 };
 
-                var timeList = new List<string> { competitor.Run1, competitor.Run2, competitor.Run3,competitor.Run4,competitor.Run5,competitor.Run6,competitor.Run7,competitor.Run8, competitor.Run9,competitor.Run10,competitor.Run11,
+                if (maxNumberOfTimes > 0)
+                {
+                    var timeList = new List<string> { competitor.Run1, competitor.Run2, competitor.Run3,competitor.Run4,competitor.Run5,competitor.Run6,competitor.Run7,competitor.Run8, competitor.Run9,competitor.Run10,competitor.Run11,
                     competitor.Run12,competitor.Run13,competitor.Run14,competitor.Run15,competitor.Run16,competitor.Run17,competitor.Run18,competitor.Run19,competitor.Run20 };
-                var penaltyList = new List<string> { competitor.Pen1, competitor.Pen2, competitor.Pen3, competitor.Pen4, competitor.Pen5, competitor.Pen6, competitor.Pen7, competitor.Pen8, competitor.Pen9, competitor.Pen10,
+                    var penaltyList = new List<string> { competitor.Pen1, competitor.Pen2, competitor.Pen3, competitor.Pen4, competitor.Pen5, competitor.Pen6, competitor.Pen7, competitor.Pen8, competitor.Pen9, competitor.Pen10,
                     competitor.Pen11, competitor.Pen12,competitor.Pen13, competitor.Pen14,competitor.Pen15, competitor.Pen16,competitor.Pen17, competitor.Pen18,competitor.Pen19, competitor.Pen20};
 
-                // Add times to an array
-                int i = 0;
-                foreach (var time in timeList)
-                {
-                    timesStr[i] = time;
-                    i++;
-                }
-
-                // Update time string with penalties (if applicable). Times over 300s or Off-course are capped
-                i = 0;
-                foreach (string penalty in penaltyList)
-                {
-                    times[i] = singleTimeValidation(ref timesStr[i], penalty);
-                    i++;
-                }
-
-                // If competitor has less timed runs than the maximum number of timed runs, add 300s to the missed runs
-                if (times.Count(k => k > 0) < maxNumberOfTimes)
-                {
-                    for (int j = times.Count(k => k > 0); j < maxNumberOfTimes; j++)
+                    // Add times to an array
+                    int i = 0;
+                    foreach (var time in timeList)
                     {
-                        times[j] = 300;
-                        timesStr[j] = "300.000";
+                        timesStr[i] = time;
+                        i++;
                     }
+
+                    // Update time string with penalties (if applicable). Times over 300s or Off-course are capped
+                    i = 0;
+                    foreach (string penalty in penaltyList)
+                    {
+                        times[i] = singleTimeValidation(ref timesStr[i], penalty);
+                        i++;
+                    }
+
+                    // If competitor has less timed runs than the maximum number of timed runs, add 300s to the missed runs
+                    if (times.Count(k => k > 0) < maxNumberOfTimes)
+                    {
+                        for (int j = times.Count(k => k > 0); j < maxNumberOfTimes; j++)
+                        {
+                            times[j] = 300;
+                            timesStr[j] = "300.000";
+                        }
+                    }
+
+                    // Update result field with times + penalty
+                    competitorFinalResult.Time1 = timesStr[0];
+                    competitorFinalResult.Time2 = timesStr[1];
+                    competitorFinalResult.Time3 = timesStr[2];
+                    competitorFinalResult.Time4 = timesStr[3];
+                    competitorFinalResult.Time5 = timesStr[4];
+                    competitorFinalResult.Time6 = timesStr[5];
+                    competitorFinalResult.Time7 = timesStr[6];
+                    competitorFinalResult.Time8 = timesStr[7];
+                    competitorFinalResult.Time9 = timesStr[8];
+                    competitorFinalResult.Time10 = timesStr[9];
+                    competitorFinalResult.Time11 = timesStr[10];
+                    competitorFinalResult.Time12 = timesStr[11];
+                    competitorFinalResult.Time13 = timesStr[12];
+                    competitorFinalResult.Time14 = timesStr[13];
+                    competitorFinalResult.Time15 = timesStr[14];
+                    competitorFinalResult.Time16 = timesStr[15];
+                    competitorFinalResult.Time17 = timesStr[16];
+                    competitorFinalResult.Time18 = timesStr[17];
+                    competitorFinalResult.Time19 = timesStr[18];
+                    competitorFinalResult.Time20 = timesStr[19];
+
+                    // Raw time (all summed up)
+                    competitorFinalResult.RawTime = times.Sum();
+
+                    //Discard the slowest time if competitor has more than one timed run
+                    if (maxNumberOfTimes > 1)
+                        competitorFinalResult.MinusSlowest = times.Sum() - times.Max();
+                    else
+                        competitorFinalResult.MinusSlowest = times.Sum();
+
+                    overallCompetitorTimes[competitorIndex] = competitorFinalResult.MinusSlowest;
+
+                    competitorFinalResult.FastestLap = times.Where(f => f > 0).Min();
                 }
-
-                // Update result field with times + penalty
-                competitorFinalResult.Time1 = timesStr[0];
-                competitorFinalResult.Time2 = timesStr[1];
-                competitorFinalResult.Time3 = timesStr[2];
-                competitorFinalResult.Time4 = timesStr[3];
-                competitorFinalResult.Time5 = timesStr[4];
-                competitorFinalResult.Time6 = timesStr[5];
-                competitorFinalResult.Time7 = timesStr[6];
-                competitorFinalResult.Time8 = timesStr[7];
-                competitorFinalResult.Time9 = timesStr[8];
-                competitorFinalResult.Time10 = timesStr[9];
-                competitorFinalResult.Time11 = timesStr[10];
-                competitorFinalResult.Time12 = timesStr[11];
-                competitorFinalResult.Time13 = timesStr[12];
-                competitorFinalResult.Time14 = timesStr[13];
-                competitorFinalResult.Time15 = timesStr[14];
-                competitorFinalResult.Time16 = timesStr[15];
-                competitorFinalResult.Time17 = timesStr[16];
-                competitorFinalResult.Time18 = timesStr[17];
-                competitorFinalResult.Time19 = timesStr[18];
-                competitorFinalResult.Time20 = timesStr[19];
-
-
-                overallCompetitorTimes[competitorIndex] = times.Sum() - times.Max();
-
-                // Raw time (all summed up)
-                competitorFinalResult.RawTime = times.Sum();
-                //Discard the slowest time
-                competitorFinalResult.MinusSlowest = times.Sum() - times.Max();
-                competitorFinalResult.FastestLap = times.Where(f => f > 0).Min();
 
                 if (competitorFinalResult.FastestLap < overallFastestLap)
                     overallFastestLap = competitorFinalResult.FastestLap;
@@ -495,10 +512,12 @@ namespace AxwareERC
                 filename = Path.GetFileName(fullDir);
                 path = Path.GetDirectoryName(fullDir);
                 var competitorsRawResults = CompetitorService.ReadFile(fullDir);
-                var maxNumberOfTimes = 20;
+                int maxNumberOfTimes = 0;
                 competitorsResults = generateViewModelResults(competitorsRawResults, ref maxNumberOfTimes);
                 DataGrid1.DataContext = competitorsResults;
 
+                // Display at least 5 time columns
+                if (maxNumberOfTimes < 5) maxNumberOfTimes = 5;
                 // Hide unused columns
                 for (int k = 1; k <= maxNumberOfTimes; k++)
                 {
@@ -644,6 +663,7 @@ namespace AxwareERC
             {
                 DataGrid1.DataContext = generateViewModelResults(competitorsRawResults, ref maxNumberOfTimes);
 
+                if (maxNumberOfTimes < 5) maxNumberOfTimes = 5;
                 // Hide unused columns
                 for (int k = 1; k <= maxNumberOfTimes; k++)
                 {
