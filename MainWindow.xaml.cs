@@ -57,9 +57,9 @@ namespace AxwareERC
             return 0;
         }
 
-        private List<CompetitorViewModel> generateViewModelResults(List<CompetitorAxware> competitorsRawResults)
+        private List<CompetitorViewModel> generateViewModelResults(List<CompetitorAxware> competitorsRawResults, ref int maxNumberOfTimes)
         {
-            int maxNumberOfTimes = 0;
+            maxNumberOfTimes = 0;
             string[] timesStr = new string[20];
             double[] times = new double[20];
             double[] overallCompetitorTimes = new double[competitorsRawResults.Count()];
@@ -226,15 +226,6 @@ namespace AxwareERC
                         break;
                 }
             }
-            // Does not work for some reason - hide not in use time columns
-            //for (int k = 1; k <= maxNumberOfTimes; k++)
-            //{
-            //    DataGrid1.Columns[k + 5].Visibility = Visibility.Visible;
-            //}
-            //for (int k = maxNumberOfTimes; k <= 20; k++)
-            //{
-            //    DataGrid1.Columns[k + 5].Visibility = Visibility.Collapsed;
-            //}
             return competitorsProcessedResults.OrderBy(o => o.Overall).ToList();
         }
 
@@ -504,8 +495,20 @@ namespace AxwareERC
                 filename = Path.GetFileName(fullDir);
                 path = Path.GetDirectoryName(fullDir);
                 var competitorsRawResults = CompetitorService.ReadFile(fullDir);
-                competitorsResults = generateViewModelResults(competitorsRawResults);
+                var maxNumberOfTimes = 20;
+                competitorsResults = generateViewModelResults(competitorsRawResults, ref maxNumberOfTimes);
                 DataGrid1.DataContext = competitorsResults;
+
+                // Hide unused columns
+                for (int k = 1; k <= maxNumberOfTimes; k++)
+                {
+                    DataGrid1.Columns[k + 4].Visibility = Visibility.Visible;
+                }
+                for (int k = maxNumberOfTimes; k < 20; k++)
+                {
+                    DataGrid1.Columns[k + 4].Visibility = Visibility.Hidden;
+                }
+
                 var lastUpdated = File.GetLastWriteTime(fullDir);
                 _vm.AppTitle = string.Concat("ERC Axware - last updated: ", lastUpdated.ToString());
                 CreateFileWatcher(path, filename);
@@ -636,10 +639,20 @@ namespace AxwareERC
             Thread.Sleep(500);
             // Specify what is done when a file is changed, created, or deleted.
             var competitorsRawResults = CompetitorService.ReadFile(Path.Combine(path, filename));
-
+            var maxNumberOfTimes = 0;
             this.Dispatcher.Invoke(() =>
             {
-                DataGrid1.DataContext = generateViewModelResults(competitorsRawResults);
+                DataGrid1.DataContext = generateViewModelResults(competitorsRawResults, ref maxNumberOfTimes);
+
+                // Hide unused columns
+                for (int k = 1; k <= maxNumberOfTimes; k++)
+                {
+                    DataGrid1.Columns[k + 4].Visibility = Visibility.Visible;
+                }
+                for (int k = maxNumberOfTimes; k < 20; k++)
+                {
+                    DataGrid1.Columns[k + 4].Visibility = Visibility.Hidden;
+                }
             });
 
             // Update window title to reflect changes
