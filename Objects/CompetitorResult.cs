@@ -35,6 +35,7 @@ namespace AxwareERC.Objects
         public double RawTime { get; set; }
         public double MinusSlowest { get; set; }
         public double FastestLap { get; set; }
+        public int Penalties { get; set; }
         public int Position { get; set; }
         public int PositionPoints { get; set; }
         public int CompetitorsInClassPoints { get; set; }

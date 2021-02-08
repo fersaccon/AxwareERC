@@ -290,6 +290,7 @@ namespace AxwareERC
 
                 if (maxNumberOfTimes > 0)
                 {
+                    int penalties = 0;
                     var timeList = new List<string> { competitor.Run1, competitor.Run2, competitor.Run3,competitor.Run4,competitor.Run5,competitor.Run6,competitor.Run7,competitor.Run8, competitor.Run9,competitor.Run10,competitor.Run11,
                     competitor.Run12,competitor.Run13,competitor.Run14,competitor.Run15,competitor.Run16,competitor.Run17,competitor.Run18,competitor.Run19,competitor.Run20 };
                     var penaltyList = new List<string> { competitor.Pen1, competitor.Pen2, competitor.Pen3, competitor.Pen4, competitor.Pen5, competitor.Pen6, competitor.Pen7, competitor.Pen8, competitor.Pen9, competitor.Pen10,
@@ -308,6 +309,18 @@ namespace AxwareERC
                     foreach (string penalty in penaltyList)
                     {
                         times[i] = singleTimeValidation(ref timesStr[i], penalty);
+                        if (penalty != "")
+                        {
+                            try
+                            {
+                                penalties += Convert.ToInt32(penalty);
+                            }
+                            catch (Exception)
+                            {
+                                // Cannot convert (off/dnf/dns)
+                                //continue;
+                            }
+                        }
                         i++;
                     }
 
@@ -342,6 +355,7 @@ namespace AxwareERC
                     competitorFinalResult.Time18 = timesStr[17];
                     competitorFinalResult.Time19 = timesStr[18];
                     competitorFinalResult.Time20 = timesStr[19];
+                    competitorFinalResult.Penalties = penalties;
 
                     // Raw time (all summed up)
                     competitorFinalResult.RawTime = times.Sum();
@@ -549,6 +563,13 @@ namespace AxwareERC
 
         private void generateResults(object sender, RoutedEventArgs e)
         {
+            overallCompetitors.Clear();
+            n2Competitors.Clear();
+            n4Competitors.Clear();
+            e2Competitors.Clear();
+            e4Competitors.Clear();
+            proCompetitors.Clear();
+            truckCompetitors.Clear();
             // Generate ERC results
             if (path != null)
             {

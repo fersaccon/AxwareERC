@@ -190,7 +190,8 @@ namespace AxwareERC
                     Car = competitor.Car,
                     Name = competitor.Name,
                     Points = new List<EventPoints>(),
-                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints,
+                    Penalties = competitor.Penalties
                 };
                 EventPoints ep = new EventPoints()
                 {
@@ -212,7 +213,8 @@ namespace AxwareERC
                     Car = competitor.Car,
                     Name = competitor.Name,
                     Points = new List<EventPoints>(),
-                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints,
+                    Penalties = competitor.Penalties
                 };
                 EventPoints ep = new EventPoints()
                 {
@@ -233,7 +235,8 @@ namespace AxwareERC
                     Car = competitor.Car,
                     Name = competitor.Name,
                     Points = new List<EventPoints>(),
-                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints,
+                    Penalties = competitor.Penalties
                 };
                 EventPoints ep = new EventPoints()
                 {
@@ -254,7 +257,8 @@ namespace AxwareERC
                     Car = competitor.Car,
                     Name = competitor.Name,
                     Points = new List<EventPoints>(),
-                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints,
+                    Penalties = competitor.Penalties
                 };
                 EventPoints ep = new EventPoints()
                 {
@@ -275,7 +279,8 @@ namespace AxwareERC
                     Car = competitor.Car,
                     Name = competitor.Name,
                     Points = new List<EventPoints>(),
-                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints,
+                    Penalties = competitor.Penalties
                 };
                 EventPoints ep = new EventPoints()
                 {
@@ -296,7 +301,8 @@ namespace AxwareERC
                     Car = competitor.Car,
                     Name = competitor.Name,
                     Points = new List<EventPoints>(),
-                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints,
+                    Penalties = competitor.Penalties
                 };
                 EventPoints ep = new EventPoints()
                 {
@@ -317,7 +323,8 @@ namespace AxwareERC
                     Car = competitor.Car,
                     Name = competitor.Name,
                     Points = new List<EventPoints>(),
-                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints
+                    Total = competitor.PositionPoints + competitor.CompetitorsInClassPoints + competitor.FastestLapPoints,
+                    Penalties = competitor.Penalties
                 };
                 EventPoints ep = new EventPoints()
                 {
@@ -402,6 +409,8 @@ namespace AxwareERC
                     previousClassResults[i].Points.Add(currentResult.Points.First());
                     // Sum points but remove the worst result
                     previousClassResults[i].Total = CalculateTotalPoints(previousClassResults[i].Points);
+                    // Sum the penalties from the current result
+                    previousClassResults[i].Penalties += currentResult.Penalties;
                 }
                 else
                 {
@@ -470,7 +479,8 @@ namespace AxwareERC
                     Name = split[1],
                     Car = split[2],
                     Points = new List<EventPoints>(),
-                    Total = int.Parse(split[events * 3 + 3])
+                    Total = int.Parse(split[events * 3 + 3]),
+                    Penalties = int.Parse(split[events * 3 + 4]),
                 };
                 for (int j = 0; j < events; j++)
                 {

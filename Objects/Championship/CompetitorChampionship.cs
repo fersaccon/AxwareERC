@@ -14,7 +14,7 @@ namespace AxwareERC.Objects
         // 3 x 15 array to sum 15 events at 3 point categories per event (Position, Competitor per class, Fastest lap)
         public List<EventPoints> Points { get; set; }
         public int Total { get; set; }
-
+        public int Penalties { get; set; }
         public object Clone()
         {
             return this.MemberwiseClone();
