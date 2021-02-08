@@ -1,6 +1,13 @@
 # AxwareERC
 
-Small application to read the Edmonton Rally Club rallycross timing results and display on a second monitor (or TV). It calculates the event results and updates the championship points according to the Rx rules.
+Small application to read the Edmonton Rally Club rallycross timing results and display on a second monitor (or TV). This application is best displayed on a Full HD (1080p) screen: all 20 timed runs would be displayed correctly and about 40 competitors. On a 720p screen, only the first 10 timed runs and about 30 competitors can fit the screen. 
+
+This application also calculates the event results and updates the championship points according to the RX rules:
+ - Discard the slowest time for final time calculation;
+ - 300 seconds time penalty for DNF, DNS or off-course. Any timed run is limited to 300s;
+ - 3 points for fastest run in class;
+ - One point per competitor in class;
+ - Position points using the model 20, 18, 16, 14, 12, 10, 8, 7, 6, 5, 4, 3, 2, 1.
 
 Input:
 - AxWare ".rgg" file: generated after an event is created and saved, and updated every time a new time is recorded (and saved by the user using "File -> Save" or "Ctrl+S").
