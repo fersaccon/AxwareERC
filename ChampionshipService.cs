@@ -367,6 +367,16 @@ namespace AxwareERC
 
         public static List<CompetitorChampionship> MergeClassResults(List<CompetitorChampionship> previousClassResults, List<CompetitorChampionship> currentClassResults, int events)
         {
+            // Nothing to update
+            if (currentClassResults.Count() == 0)
+            {
+                if (previousClassResults == null)
+                    return new List<CompetitorChampionship>();
+                else
+                    return previousClassResults;
+            }
+
+
             List<int> competitorNumberList = new List<int>();
 
             bool found = false;
