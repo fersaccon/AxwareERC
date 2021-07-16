@@ -412,7 +412,7 @@ namespace AxwareERC
                     i++;
                 }
 
-                if (found)
+                if (i < previousClassResults.Count() && found)
                 {
                     // Found competitor
                     // Add event points to the championship results
