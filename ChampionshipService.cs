@@ -386,7 +386,6 @@ namespace AxwareERC
                 int i = 0;
                 // Attempt to find drivers with same number within class only if the previous count is greather than zero
                 if (previousClassResults != null) {
-                    //var test = from previousResult in championshipPreviousResults where previousResult.Car == currentResult.Car select previousResult.FirstOrDefault();
                     while (i < previousClassResults.Count())
                     {
                         if (currentResult.Number == previousClassResults[i].Number)
@@ -420,7 +419,7 @@ namespace AxwareERC
                         // Add event points to the championship results
                         previousClassResults[i].Points.Add(currentResult.Points.First());
                         // Sum points but remove the worst result
-                        previousClassResults[i].Total = CalculateTotalPoints(previousClassResults[i].Points);
+                        //previousClassResults[i].Total = CalculateTotalPoints(previousClassResults[i].Points);
                         // Sum the penalties from the current result
                         previousClassResults[i].Penalties += currentResult.Penalties;
                         continue;
@@ -459,6 +458,13 @@ namespace AxwareERC
                 }
             }
 
+            //Iterate over results list and recalculate the competitors points
+            foreach (var competitor in previousClassResults)
+            {
+                // Sum points but remove the worst result
+                competitor.Total = CalculateTotalPoints(competitor.Points);
+            }
+
             //Reorder list by points
             previousClassResults = previousClassResults.OrderByDescending(o => o.Total).ToList();
 
@@ -475,7 +481,11 @@ namespace AxwareERC
             {
                 // Skip if is null
                 if (!points.Position.HasValue)
+                {
+                    minimumPoints = 0;
                     continue;
+                }
+                    
 
                 int total = points.Position.Value + points.CompetitorsInClass.Value + points.FastestLap.Value;
 
