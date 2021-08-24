@@ -384,53 +384,68 @@ namespace AxwareERC
             {
                 competitorNumberList.Add(currentResult.Number);
                 int i = 0;
-                //var test = from previousResult in championshipPreviousResults where previousResult.Car == currentResult.Car select previousResult.FirstOrDefault();
-                while (i < previousClassResults.Count())
-                {
-                    if (currentResult.Number == previousClassResults[i].Number)
+                // Attempt to find drivers with same number within class only if the previous count is greather than zero
+                if (previousClassResults != null) {
+                    //var test = from previousResult in championshipPreviousResults where previousResult.Car == currentResult.Car select previousResult.FirstOrDefault();
+                    while (i < previousClassResults.Count())
                     {
-                        // Names match, so it can proceed
-                        if (currentResult.Name == previousClassResults[i].Name)
+                        if (currentResult.Number == previousClassResults[i].Number)
                         {
-                            found = true;
-                            break;
-                        }
-                        else
-                        {
-                            //Throw message to verify if the competitors are the same
-                            var dr = MessageBox.Show("A competitor with same car number was found (#" + currentResult.Number + "). Previous competitor: " + previousClassResults[i].Name + ", current competitor: " + currentResult.Name +
-                                ".\nDo you want to merge results?", "Attention required", MessageBoxButtons.YesNo);
-                            if(dr == DialogResult.Yes)
+                            // Names match, so it can proceed
+                            if (currentResult.Name == previousClassResults[i].Name)
                             {
-                                // If yes, stop the search and merge the results. Otherwise keep looking until another competitor is found (if found). Duplicated numbers will be created
                                 found = true;
                                 break;
                             }
+                            else
+                            {
+                                //Throw message to verify if the competitors are the same
+                                var dr = MessageBox.Show("A competitor with same car number was found (#" + currentResult.Number + "). Previous competitor: " + previousClassResults[i].Name + ", current competitor: " + currentResult.Name +
+                                    ".\nDo you want to merge results?", "Attention required", MessageBoxButtons.YesNo);
+                                if (dr == DialogResult.Yes)
+                                {
+                                    // If yes, stop the search and merge the results. Otherwise keep looking until another competitor is found (if found). Duplicated numbers will be created
+                                    found = true;
+                                    break;
+                                }
+                            }
                         }
+
+                        i++;
                     }
 
-                    i++;
-                }
+                    if (i < previousClassResults.Count() && found)
+                    {
+                        // Found competitor
+                        // Add event points to the championship results
+                        previousClassResults[i].Points.Add(currentResult.Points.First());
+                        // Sum points but remove the worst result
+                        previousClassResults[i].Total = CalculateTotalPoints(previousClassResults[i].Points);
+                        // Sum the penalties from the current result
+                        previousClassResults[i].Penalties += currentResult.Penalties;
+                        continue;
+                    }
+                    else
+                    {
+                        // Not found. Add another competitor to the results or continue searching (different number?)
+                        var eventPoints = new EventPoints();
+                        for (int j = 0; j < events - 1;j++)
+                            currentResult.Points.Insert(0, eventPoints);
 
-                if (i < previousClassResults.Count() && found)
-                {
-                    // Found competitor
-                    // Add event points to the championship results
-                    previousClassResults[i].Points.Add(currentResult.Points.First());
-                    // Sum points but remove the worst result
-                    previousClassResults[i].Total = CalculateTotalPoints(previousClassResults[i].Points);
-                    // Sum the penalties from the current result
-                    previousClassResults[i].Penalties += currentResult.Penalties;
+                        previousClassResults.Add(currentResult);
+                    }
                 }
                 else
                 {
-                    // Not found. Add another competitor to the results or continue searching (different number?)
+                    // Add first competitor to the results
                     var eventPoints = new EventPoints();
-                    for (int j = 0; j < events - 1;j++)
+                    for (int j = 0; j < events - 1; j++)
                         currentResult.Points.Insert(0, eventPoints);
 
+                    previousClassResults = new List<CompetitorChampionship>();
                     previousClassResults.Add(currentResult);
                 }
+
             }
 
             //Iterate over results list and add null points to competitors that did not attend the current event
