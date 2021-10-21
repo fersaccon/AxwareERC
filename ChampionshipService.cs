@@ -373,7 +373,26 @@ namespace AxwareERC
                 if (previousClassResults == null)
                     return new List<CompetitorChampionship>();
                 else
+                {
+                    //Iterate over results list and add null points to competitors that did not attend the current event
+                    foreach (var currentResult in previousClassResults)
+                    {
+                        var eventPoints = new EventPoints();
+                        for (int j = currentResult.Points.Count(); j < events; j++)
+                            currentResult.Points.Add(eventPoints);
+                    }
+
+                    //Iterate over results list and recalculate the competitors points
+                    foreach (var competitor in previousClassResults)
+                    {
+                        // Sum points but remove the worst result
+                        competitor.Total = CalculateTotalPoints(competitor.Points);
+                    }
+
+                    //Reorder list by points
+                    previousClassResults = previousClassResults.OrderByDescending(o => o.Total).ToList();
                     return previousClassResults;
+                }
             }
 
 
