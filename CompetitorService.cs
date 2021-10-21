@@ -19,7 +19,7 @@ namespace AxwareERC
                        let split = l.Split('\t')
                        select new CompetitorAxware
                        {
-                           Class = (CompetitionClass)Enum.Parse(typeof(CompetitionClass), split[0]),
+                           Class = (CompetitionClass)Enum.Parse(typeof(CompetitionClass), split[0].ToLower()),
                            Number = int.Parse(split[1]),
                            Name = split[2] + " " + split[3],
                            //FirstName = split[2],
